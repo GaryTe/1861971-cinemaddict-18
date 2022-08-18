@@ -1,4 +1,3 @@
-import { indices } from './fishData/data.js';
 import dayjs from 'dayjs';
 
 const getRandomInteger = (a = 0, b = 1) => {
@@ -14,4 +13,4 @@ const humanizeMinute = (minute) => dayjs (minute).format ('mm');
 
 const humanizeDateMonthYear = (data) => dayjs (data).format ('DD MMMM YYYY');
 
-export {getRandomInteger, indices, humanizeYear, humanizeHour, humanizeMinute, humanizeDateMonthYear};
+export {getRandomInteger, humanizeYear, humanizeHour, humanizeMinute, humanizeDateMonthYear};

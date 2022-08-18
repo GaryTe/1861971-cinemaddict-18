@@ -1,17 +1,8 @@
 import {createElement} from '../render.js';
-import { indices, humanizeYear, humanizeHour, humanizeMinute } from '../utils.js';
-
-let counter = 0;
+import { humanizeYear, humanizeHour, humanizeMinute } from '../utils.js';
 
 const createMovieCard = (data) => {
-  const {filmInfo,comments} = data;
-
-  const getGenre = () => {
-    const values = indices.slice(counter);
-    counter += 1;
-    const genre = values;
-    return genre;
-  };
+  const {index,filmInfo,comments} = data;
 
   return (`<article class="film-card">
 <a class="film-card__link">
@@ -20,7 +11,7 @@ const createMovieCard = (data) => {
   <p class="film-card__info">
     <span class="film-card__year">${humanizeYear (filmInfo.release.date)}</span>
     <span class="film-card__duration">${`${humanizeHour (filmInfo.release.date)}h ${humanizeMinute (filmInfo.release.date)}m`}</span>
-    <span class="film-card__genre">${filmInfo.genre[getGenre()[0]]}</span>
+    <span class="film-card__genre">${filmInfo.genre[index]}</span>
   </p>
   <img src="${filmInfo.poster}" alt="" class="film-card__poster">
   <p class="film-card__description">${filmInfo.description.length === 140 ? filmInfo.description : `${filmInfo.description.slice(0, 139)}...`}</p>

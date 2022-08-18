@@ -1,8 +1,5 @@
 import { getRandomInteger } from '../utils.js';
 
-let id = null;
-const indices = [];
-
 const date = [
   '1984-05-11T00:45:00.000Z',
   '1936-05-11T00:16:00.000Z',
@@ -23,6 +20,16 @@ const ratings = [
   7.1
 ];
 
+const descriptions = [
+  './images/posters/made-for-each-other.png',
+  './images/posters/popeye-meets-sinbad.png',
+  './images/posters/sagebrush-trail.jpg',
+  './images/posters/santa-claus-conquers-the-martians.jpg',
+  './images/posters/the-dance-of-life.jpg',
+  './images/posters/the-great-flamarion.jpg',
+  './images/posters/the-man-with-the-golden-arm.jpg'
+];
+
 const titles = [
   'Made for Each Other',
   'Popeye the Sailor Meets Sindbad the Sailor',
@@ -34,22 +41,9 @@ const titles = [
 ];
 
 const generateImageAddress = () => {
-
-  const descriptions = [
-    './images/posters/made-for-each-other.png',
-    './images/posters/popeye-meets-sinbad.png',
-    './images/posters/sagebrush-trail.jpg',
-    './images/posters/santa-claus-conquers-the-martians.jpg',
-    './images/posters/the-dance-of-life.jpg',
-    './images/posters/the-great-flamarion.jpg',
-    './images/posters/the-man-with-the-golden-arm.jpg'
-  ];
-
   const index = getRandomInteger(0, descriptions.length - 1);
-  id = index;
-  indices.push (index);
 
-  return descriptions[index];
+  return index;
 };
 
 const generateComment = () => {
@@ -68,44 +62,49 @@ const generateComment = () => {
   return comments;
 };
 
-export const data = () => ({
-  'id': '0',
-  'comments': generateComment (),
-  'filmInfo': {
-    'poster': generateImageAddress (),
-    'alternativeTitle': 'Laziness Who Sold Themselves',
-    'totalRating':ratings [id],
-    'title': titles [id],
-    'ageRating': 18,
-    'director': 'Tom Ford',
-    'writers': [
-      'Takeshi Kitano'
-    ],
-    'actors': [
-      'Morgan Freeman'
-    ],
-    'release': {
-      'date': date [id],
-      'releaseCountry': 'Finland'
-    },
-    'runtime': 77,
-    'genre': [
-      'Drama',
-      'Cartoon',
-      'Western',
-      'Comedy',
-      'Musical',
-      'Adventure',
-      'Drama'
-    ],
-    'description': 'Oscar-winning film, a war drama about two young people, from the creators of timeless classic "Nu, Pogodi!" and "Alice in Wonderland", with the best fight scenes since Bruce Lee.'
-  },
-  'userDetails': {
-    'watchlist': false,
-    'alreadyWatched': true,
-    'watchingDate': '2019-04-12T16:12:32.554Z',
-    'favorite': false
-  }
-});
+const getData = () => {
+  const numberId = generateImageAddress ();
 
-export {indices};
+  return {
+    'index': numberId,
+    'id': '0',
+    'comments': generateComment (),
+    'filmInfo': {
+      'poster': descriptions [numberId],
+      'alternativeTitle': 'Laziness Who Sold Themselves',
+      'totalRating':ratings [numberId],
+      'title': titles [numberId],
+      'ageRating': 18,
+      'director': 'Tom Ford',
+      'writers': [
+        'Takeshi Kitano'
+      ],
+      'actors': [
+        'Morgan Freeman'
+      ],
+      'release': {
+        'date': date [numberId],
+        'releaseCountry': 'Finland'
+      },
+      'runtime': 77,
+      'genre': [
+        'Drama',
+        'Cartoon',
+        'Western',
+        'Comedy',
+        'Musical',
+        'Adventure',
+        'Drama'
+      ],
+      'description': 'Oscar-winning film, a war drama about two young people, from the creators of timeless classic "Nu, Pogodi!" and "Alice in Wonderland", with the best fight scenes since Bruce Lee.'
+    },
+    'userDetails': {
+      'watchlist': false,
+      'alreadyWatched': true,
+      'watchingDate': '2019-04-12T16:12:32.554Z',
+      'favorite': false
+    }
+  };
+};
+
+export {getData};

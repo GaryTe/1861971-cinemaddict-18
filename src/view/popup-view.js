@@ -1,26 +1,17 @@
 import {createElement} from '../render.js';
-import { humanizeDateMonthYear, humanizeHour, humanizeMinute, getRandomInteger, indices } from '../utils.js';
-
-let counter = 0;
+import { humanizeDateMonthYear, humanizeHour, humanizeMinute, getRandomInteger } from '../utils.js';
 
 const createPopup = (data) => {
-  const {filmInfo, comments} = data;
-
-  const getIndex = () => {
-    const values = indices.slice(counter);
-    counter += 1;
-    const genre = values;
-    return genre;
-  };
+  const {index, filmInfo, comments} = data;
 
   const getGenre = () => {
     const datas = filmInfo.genre.slice (0,getRandomInteger (0, 2));
-    datas.unshift (filmInfo.genre[getIndex()[0]]);
+    datas.unshift (filmInfo.genre[index]);
 
     return datas;
   };
 
-  const genres = getGenre ();
+  const genres = getGenre();
 
   return (`<section class="film-details">
 <div class="film-details__inner">

@@ -22,4 +22,5 @@ render(new ContainerView(), mainElement);
 render(new NumberOfFilmsView(), footerElement);
 
 const container = document.querySelector('.films-list__container');
-componentRenderingPresenter.init(container, element, receivingDataTransmissionModel);
+const parentElements = document.querySelector ('body');
+componentRenderingPresenter.init(container, element, receivingDataTransmissionModel, parentElements);

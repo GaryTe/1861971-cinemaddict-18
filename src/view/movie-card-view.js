@@ -26,23 +26,26 @@ const createMovieCard = (data) => {
 };
 
 export default class MovieCardView {
+  #element = null;
+  #data = {};
+
   constructor (data) {
-    this.data = data;
+    this.#data = data;
   }
 
-  getTemplate() {
-    return createMovieCard(this.data);
+  get template() {
+    return createMovieCard(this.#data);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
     }
 
-    return this.element;
+    return this.#element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
   }
 }

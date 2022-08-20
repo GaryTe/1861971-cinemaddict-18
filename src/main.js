@@ -24,3 +24,4 @@ render(new NumberOfFilmsView(), footerElement);
 const container = document.querySelector('.films-list__container');
 const parentElements = document.querySelector ('body');
 componentRenderingPresenter.init(container, element, receivingDataTransmissionModel, parentElements);
+componentRenderingPresenter.closePopupKey ();

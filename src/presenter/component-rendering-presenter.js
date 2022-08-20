@@ -28,7 +28,7 @@ export default class ComponentRenderingPresenter {
     const movieCard = new MovieCardView (data);
 
     movieCard.element.querySelector ('.film-card__link') .addEventListener ('click', () => {
-      document.addEventListener('keydown',this.#closePopupKey);
+      document.addEventListener('keydown',this.closePopupKey);
       this.#checkOpenPopups ();
       const popup = new PopupView (data);
       const closeButton = popup.element.querySelector ('.film-details__close-btn');
@@ -43,16 +43,17 @@ export default class ComponentRenderingPresenter {
   }
 
   #closPopup () {
-    document.removeEventListener('keydown', this.#closePopupKey);
+    document.removeEventListener('keydown', this.closePopupKey);
     const childElement = document.querySelector ('.film-details');
     this.#parentElements.removeChild (childElement);
     this.#parentElements.classList.remove ('hide-overflow');
   }
 
-  #closePopupKey (evt) {
+  closePopupKey (evt) {
+    console.log (this);
     if(evt.key === 'Escape' || evt.key === 'Esc'){
       this.#closPopup();
-      document.removeEventListener('keydown', this.#closePopupKey);
+      document.removeEventListener('keydown', this.closePopupKey);
     }
   }
 

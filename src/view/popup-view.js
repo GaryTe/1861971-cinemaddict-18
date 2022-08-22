@@ -181,23 +181,26 @@ const createPopup = (data) => {
 };
 
 export default class PopupView {
+  #element = null;
+  #data = {};
+
   constructor (data) {
-    this.data = data;
+    this.#data = data;
   }
 
-  getTemplate() {
-    return createPopup(this.data);
+  get template() {
+    return createPopup(this.#data);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
     }
 
-    return this.element;
+    return this.#element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
   }
 }

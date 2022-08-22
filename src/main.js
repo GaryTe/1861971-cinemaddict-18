@@ -3,8 +3,8 @@ import NavigationMenuView from './view/navigation-menu-view.js';
 import SortingView from './view/sorting-view.js';
 import ContainerView from './view/container-view.js';
 import NumberOfFilmsView from './view/number-of-films-view.js';
-import ComponentRenderingPresenter from './presenter/component-rendering-presenter.js';
-import ReceivingDataTransmissionModel from './model/receiving-data-transmission-model';
+import ComponentRenderingMovieCardPopupPresenter from './presenter/component-rendering-movie-card-popup-presenter.js';
+import ReceivingDataTransmissionModel from './model/receiving-data-transmission-model.js';
 import {render} from './render.js';
 
 const headerElement = document.querySelector('.header');
@@ -26,5 +26,5 @@ render(new NumberOfFilmsView(), footerElement);
 const container = document.querySelector('.films-list__container');
 const parentElements = document.querySelector ('body');
 
-const componentRenderingPresenter = new ComponentRenderingPresenter(container, element, receivingDataTransmissionModel, parentElements, containerView, sortingView);
+const componentRenderingPresenter = new ComponentRenderingMovieCardPopupPresenter(container, element, receivingDataTransmissionModel, parentElements, containerView, sortingView);
 componentRenderingPresenter.init();

@@ -6,7 +6,7 @@ import {RenderPosition, render} from '../render.js';
 
 const COUNTER = 5;
 
-export default class ComponentRenderingPresenter {
+export default class ComponentRenderingMovieCardPopupPresenter {
   #parentElements = null;
   #container = null;
   #element = null;
@@ -76,7 +76,7 @@ export default class ComponentRenderingPresenter {
 
 
   #closePopupKey = (evt) => {
-    if(evt.key === 'Enter') {
+    if(evt.key === 'Esc' || evt.key === 'Escape') {
       this.#closPopup();
       document.removeEventListener('keydown', this.#closePopupKey);
     }

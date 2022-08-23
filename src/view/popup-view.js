@@ -1,4 +1,4 @@
-import {createElement} from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import { humanizeDateMonthYear, humanizeHour, humanizeMinute, getRandomInteger } from '../utils.js';
 
 const createPopup = (data) => {
@@ -180,11 +180,11 @@ const createPopup = (data) => {
 </section>`);
 };
 
-export default class PopupView {
-  #element = null;
+export default class PopupView extends AbstractView {
   #data = {};
 
   constructor (data) {
+    super ();
     this.#data = data;
   }
 
@@ -192,15 +192,14 @@ export default class PopupView {
     return createPopup(this.#data);
   }
 
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
 
-    return this.#element;
+  setClickHandler (callback) {
+    this._callback.click = callback;
+    this.element.querySelector ('.film-details__close-btn').addEventListener ('click', this.#click);
   }
 
-  removeElement() {
-    this.#element = null;
-  }
+
+  #click = () => {
+    this._callback.click ();
+  };
 }

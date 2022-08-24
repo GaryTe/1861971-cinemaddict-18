@@ -1,4 +1,4 @@
-import { getRandomInteger } from '../utils.js';
+import { getRandomInteger } from './utils';
 
 const date = [
   '1984-05-11T00:45:00.000Z',

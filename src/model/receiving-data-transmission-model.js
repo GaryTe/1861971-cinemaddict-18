@@ -1,7 +1,7 @@
-import { getData } from '../fishData/data.js';
+import { getData } from '../data';
 
 export default class ReceivingDataTransmissionModel {
-  #data = Array.from ({length:20},getData);
+  #data = Array.from ({length:13},getData);
 
   get tasks () {return this.#data;}
 }

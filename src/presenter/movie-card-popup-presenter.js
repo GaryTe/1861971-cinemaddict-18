@@ -2,11 +2,11 @@ import MovieCardView from '../view/movie-card-view.js';
 import ButtonView from '../view/button-view.js';
 import PopupView from '../view/popup-view.js';
 import MessageView from '../view/message-view.js';
-import {RenderPosition, render} from '../render.js';
+import {RenderPosition, render, remove} from '../framework/render.js';
 
 const COUNTER = 5;
 
-export default class ComponentRenderingMovieCardPopupPresenter {
+export default class MovieCardPopupPresenter {
   #parentElements = null;
   #container = null;
   #element = null;
@@ -36,7 +36,7 @@ export default class ComponentRenderingMovieCardPopupPresenter {
 
   #validationData () {
     if (this.#datas.every ((data) => data.isArchive)) {
-      this.#sortingView.element.remove ();
+      remove (this.#sortingView);
       render(this.#messageView, this.#containerView.element, RenderPosition.AFTERBEGIN);
     } else {
       this.#transferData ();
@@ -62,15 +62,14 @@ export default class ComponentRenderingMovieCardPopupPresenter {
 
     if (this.#datas.length > COUNTER) {
       render(this.#buttonView, this.#container, RenderPosition.AFTEREND);
-      this.#buttonView.element.addEventListener ('click', this.#renderMoreCards);
+      this.#buttonView.setClickHandler (this.#renderMoreCards);
     }
   }
 
 
   #removeButton () {
     if (this.#number >= this.#datas.length) {
-      this.#buttonView.element.remove ();
-      this.#buttonView.removeElement ();
+      remove (this.#buttonView);
     }
   }
 
@@ -83,31 +82,29 @@ export default class ComponentRenderingMovieCardPopupPresenter {
   };
 
 
+  #renderPopup = (data) => {
+    document.addEventListener('keydown',this.#closePopupKey);
+    this.#checkOpenPopups ();
+    const popup = new PopupView (data);
+    popup.setClickHandler (this.#closPopup);
+    render(popup, this.#element, RenderPosition.AFTEREND);
+    this.#parentElements.classList.add ('hide-overflow');
+  };
+
+
   #renderMovieCardAndPopup (data) {
     const movieCard = new MovieCardView (data);
-
-    movieCard.element.querySelector ('.film-card__link') .addEventListener ('click', () => {
-      document.addEventListener('keydown',this.#closePopupKey);
-      this.#checkOpenPopups ();
-      const popup = new PopupView (data);
-      const closeButton = popup.element.querySelector ('.film-details__close-btn');
-      closeButton.addEventListener ('click', () => {
-        this.#closPopup ();
-      });
-      render(popup, this.#element, RenderPosition.AFTEREND);
-      this.#parentElements.classList.add ('hide-overflow');
-    });
-
+    movieCard.setClickHandler (this.#renderPopup,data);
     render(movieCard, this.#container);
   }
 
 
-  #closPopup () {
+  #closPopup = () => {
     document.removeEventListener('keydown', this.#closePopupKey);
     const childElement = document.querySelector ('.film-details');
     this.#parentElements.removeChild (childElement);
     this.#parentElements.classList.remove ('hide-overflow');
-  }
+  };
 
 
   #checkOpenPopups () {

@@ -2,7 +2,7 @@ import AbstractView from '../framework/view/abstract-view.js';
 import { humanizeDateMonthYear, humanizeHour, humanizeMinute, getRandomInteger } from '../utils.js';
 
 const createPopup = (data) => {
-  const {index, filmInfo, comments} = data;
+  const {index, filmInfo, comments, userDetails} = data;
 
   const getGenre = () => {
     const datas = filmInfo.genre.slice (0,getRandomInteger (0, 2));
@@ -80,9 +80,9 @@ const createPopup = (data) => {
     </div>
 
     <section class="film-details__controls">
-      <button type="button" class="film-details__control-button film-details__control-button--watchlist" id="watchlist" name="watchlist">Add to watchlist</button>
-      <button type="button" class="film-details__control-button film-details__control-button--active film-details__control-button--watched" id="watched" name="watched">Already watched</button>
-      <button type="button" class="film-details__control-button film-details__control-button--favorite" id="favorite" name="favorite">Add to favorites</button>
+      <button type="button" class="film-details__control-button film-details__control-button--watchlist ${userDetails.watchlist === true ? 'film-details__control-button--active' : ''}" id="watchlist" name="watchlist">Add to watchlist</button>
+      <button type="button" class="film-details__control-button film-details__control-button--watched ${userDetails.alreadyWatched === true ? 'film-details__control-button--active' : ''}" id="watched" name="watched">Already watched</button>
+      <button type="button" class="film-details__control-button film-details__control-button--favorite ${userDetails.favorite === true ? 'film-details__control-button--active' : ''}" id="favorite" name="favorite">Add to favorites</button>
     </section>
   </div>
 

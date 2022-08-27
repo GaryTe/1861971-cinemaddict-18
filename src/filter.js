@@ -1,11 +1,11 @@
-const getData = (datas) => {
+const getValuesToFilters = (temporaryDatas) => {
   const values1 = [];
   const values2 = [];
   const values3 = [];
   let filter = {};
 
-  for (const data of datas) {
-    const {userDetails} = data;
+  for (const temporaryValues of temporaryDatas) {
+    const {userDetails} = temporaryValues;
 
     if (userDetails.watchlist === true) {
       values1.push (userDetails.watchlist);
@@ -27,4 +27,4 @@ const getData = (datas) => {
 };
 
 
-export {getData};
+export {getValuesToFilters};

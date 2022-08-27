@@ -5,7 +5,7 @@ import ContainerView from './view/container-view.js';
 import NumberOfFilmsView from './view/number-of-films-view.js';
 import MovieCardPopupPresenter from './presenter/movie-card-popup-presenter.js';
 import ReceivingDataTransmissionModel from './model/receiving-data-transmission-model.js';
-import {getData} from './filter.js';
+import {getValuesToFilters} from './filter.js';
 import {render} from './framework/render.js';
 
 const headerElement = document.querySelector('.header');
@@ -15,12 +15,11 @@ const element = document.querySelector('footer');
 
 
 const receivingDataTransmissionModel = new ReceivingDataTransmissionModel();
-const data = getData (receivingDataTransmissionModel.tasks);
 const containerView = new ContainerView;
 const sortingView = new SortingView;
 
 render(new UserNameView(), headerElement);
-render(new NavigationMenuView(data), mainElement);
+render(new NavigationMenuView(getValuesToFilters (receivingDataTransmissionModel.tasks)), mainElement);
 render(sortingView, mainElement);
 render(containerView, mainElement);
 render(new NumberOfFilmsView(), footerElement);

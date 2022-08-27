@@ -22,4 +22,19 @@ export default class NavigationMenuView extends AbstractView {
   get template() {
     return createFilter(this.#data);
   }
+
+  setClickHandler (callback) {
+    this._callback.click = callback;
+    const buttons = this.element.querySelectorAll ('.main-navigation__item');
+    for (const button of buttons) {
+      button.addEventListener ('click', this.#click);
+    }
+  }
+
+
+  #click = (evt) => {
+    const key = evt.target.href.split ('/')[3].split ('').slice (1).join ('');
+    this._callback.click (key);
+  };
+
 }

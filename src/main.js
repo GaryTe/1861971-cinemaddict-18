@@ -5,6 +5,8 @@ import ContainerView from './view/container-view.js';
 import NumberOfFilmsView from './view/number-of-films-view.js';
 import MovieCardPopupPresenter from './presenter/movie-card-popup-presenter.js';
 import ReceivingDataTransmissionModel from './model/receiving-data-transmission-model.js';
+import FilterModel from './model/filter-model.js';
+import FilterPresenter from './presenter/filter - presenter.js';
 import {getValuesToFilters} from './filter.js';
 import {render} from './framework/render.js';
 
@@ -17,9 +19,13 @@ const element = document.querySelector('footer');
 const receivingDataTransmissionModel = new ReceivingDataTransmissionModel();
 const containerView = new ContainerView;
 const sortingView = new SortingView;
+const filter = getValuesToFilters (receivingDataTransmissionModel.tasks);
+const navigationMenuView = new NavigationMenuView (filter);
+const filterModel = new FilterModel (receivingDataTransmissionModel);
+
 
 render(new UserNameView(), headerElement);
-render(new NavigationMenuView(getValuesToFilters (receivingDataTransmissionModel.tasks)), mainElement);
+render(navigationMenuView, mainElement);
 render(sortingView, mainElement);
 render(containerView, mainElement);
 render(new NumberOfFilmsView(), footerElement);
@@ -29,3 +35,5 @@ const parentElements = document.querySelector ('body');
 
 const movieCardPopupPresenter = new MovieCardPopupPresenter(container, element, receivingDataTransmissionModel, parentElements, containerView, sortingView);
 movieCardPopupPresenter.init();
+const filterPresenter = new FilterPresenter (navigationMenuView, filterModel, movieCardPopupPresenter, receivingDataTransmissionModel);
+filterPresenter.init();

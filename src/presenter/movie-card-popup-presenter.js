@@ -17,9 +17,10 @@ export default class MovieCardPopupPresenter {
   #messageView = new MessageView;
   #buttonView = new ButtonView;
   #number = COUNTER;
+  #movieCard = null;
 
 
-  constructor (container, element, receivingDataTransmissionModel, parentElements, containerView, sortingView) {
+  constructor (container, element, receivingDataTransmissionModel, parentElements, containerView, sortingView,) {
     this.#parentElements = parentElements;
     this.#container = container;
     this.#element = element;
@@ -41,6 +42,18 @@ export default class MovieCardPopupPresenter {
     } else {
       this.#transferData ();
     }
+  }
+
+
+  setChangeData (temporaryDatas) {
+    this.#datas = temporaryDatas;
+    this.#number = COUNTER;
+    const childElements = document.querySelectorAll ('.film-card');
+    for (const childElement of childElements) {
+      this.#container.removeChild (childElement);
+    }
+    remove (this.#movieCard);
+    this.#validationData ();
   }
 
 
@@ -93,9 +106,9 @@ export default class MovieCardPopupPresenter {
 
 
   #renderMovieCardAndPopup (data) {
-    const movieCard = new MovieCardView (data);
-    movieCard.setClickHandler (this.#renderPopup,data);
-    render(movieCard, this.#container);
+    this.#movieCard = new MovieCardView (data);
+    this.#movieCard.setClickHandler (this.#renderPopup,data);
+    render(this.#movieCard, this.#container);
   }
 
 

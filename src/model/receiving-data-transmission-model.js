@@ -1,7 +1,7 @@
-import { getData } from '../data';
+import { values } from '../data';
 
 export default class ReceivingDataTransmissionModel {
-  #data = Array.from ({length:13},getData);
+  #data = values;
 
   get tasks () {return this.#data;}
 }

@@ -107,4 +107,7 @@ const getData = () => {
   };
 };
 
-export {getData};
+
+const values = Array.from ({length:13},getData);
+
+export {values};

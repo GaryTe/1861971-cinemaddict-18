@@ -1,18 +1,18 @@
-import { values } from '../data';
+import {movies} from '../data';
 
 export default class FilterModel {
-  #temporaryDatas = values;
-  values = [];
+  #movies = movies;
+  sortMovies = [];
 
 
-  setSortDataByKey (key) {
-    this.values = [];
-    for (const temporaryValues of this.#temporaryDatas) {
-      const {userDetails} = temporaryValues;
-      if (userDetails.favorite === true) {
-        this.values.push (temporaryValues);
+  setSortDataByKey (filterNames) {
+    this.sortMovies = [];
+    for (const movie of this.#movies) {
+      const {userDetails} = movie;
+      if (userDetails[filterNames] === true) {
+        this.sortMovies.push (movie);
       }
     }
-    return this.values;
+    return this.sortMovies;
   }
 }

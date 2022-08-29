@@ -1,13 +1,19 @@
+const FILTER_NAME = {
+  watchlist: 'watchlist',
+  history: 'alreadyWatched',
+  favorites: 'favorite'
+};
+
 export default class FilterPresenter {
   #navigationMenuView = null;
   #filterModel = null;
-  #movieCardPopupPresenter = null;
+  #movieCardsPresenter = null;
   #receivingDataTransmissionModel = null;
 
-  constructor (navigationMenuView, filterModel, movieCardPopupPresenter, receivingDataTransmissionModel) {
+  constructor (navigationMenuView, filterModel, movieCardsPresenter, receivingDataTransmissionModel) {
     this.#navigationMenuView = navigationMenuView;
     this.#filterModel = filterModel;
-    this.#movieCardPopupPresenter = movieCardPopupPresenter;
+    this.#movieCardsPresenter = movieCardsPresenter;
     this.#receivingDataTransmissionModel = receivingDataTransmissionModel;
   }
 
@@ -17,13 +23,13 @@ export default class FilterPresenter {
   }
 
 
-  #callFilterModel = (key) => {
-    if (key === 'all') {
-      const fishDatas = this.#receivingDataTransmissionModel.tasks;
-      this.#movieCardPopupPresenter.setChangeData (fishDatas);
+  #callFilterModel = (filterNames) => {
+    if (filterNames === 'all') {
+      const movies = this.#receivingDataTransmissionModel.movies;
+      this.#movieCardsPresenter.setChangeData (movies);
     } else {
-      const temporaryDatas = this.#filterModel.setSortDataByKey (key);
-      this.#movieCardPopupPresenter.setChangeData (temporaryDatas);
+      const sortMovies = this.#filterModel.setSortDataByKey (FILTER_NAME[filterNames]);
+      this.#movieCardsPresenter.setChangeData (sortMovies);
     }
   };
 

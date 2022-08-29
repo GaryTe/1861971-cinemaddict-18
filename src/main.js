@@ -3,8 +3,8 @@ import NavigationMenuView from './view/navigation-menu-view.js';
 import SortingView from './view/sorting-view.js';
 import ContainerView from './view/container-view.js';
 import NumberOfFilmsView from './view/number-of-films-view.js';
-import MovieCardPopupPresenter from './presenter/movie-card-popup-presenter.js';
-import ReceivingDataTransmissionModel from './model/receiving-data-transmission-model.js';
+import MovieCardsPresenter from './presenter/movie-cards-presenter.js';
+import MoviesModel from './model/movies-model';
 import FilterModel from './model/filter-model.js';
 import FilterPresenter from './presenter/filter - presenter.js';
 import {getValuesToFilters} from './filter.js';
@@ -16,12 +16,12 @@ const footerElement = document.querySelector('.footer__statistics');
 const element = document.querySelector('footer');
 
 
-const receivingDataTransmissionModel = new ReceivingDataTransmissionModel();
+const moviesModel = new MoviesModel();
 const containerView = new ContainerView;
 const sortingView = new SortingView;
-const filter = getValuesToFilters (receivingDataTransmissionModel.tasks);
+const filter = getValuesToFilters (moviesModel.movies);
 const navigationMenuView = new NavigationMenuView (filter);
-const filterModel = new FilterModel (receivingDataTransmissionModel);
+const filterModel = new FilterModel (moviesModel);
 
 
 render(new UserNameView(), headerElement);
@@ -33,7 +33,7 @@ render(new NumberOfFilmsView(), footerElement);
 const container = document.querySelector('.films-list__container');
 const parentElements = document.querySelector ('body');
 
-const movieCardPopupPresenter = new MovieCardPopupPresenter(container, element, receivingDataTransmissionModel, parentElements, containerView, sortingView);
-movieCardPopupPresenter.init();
-const filterPresenter = new FilterPresenter (navigationMenuView, filterModel, movieCardPopupPresenter, receivingDataTransmissionModel);
+const movieCardsPresenter = new MovieCardsPresenter(container, element, moviesModel, parentElements, containerView, sortingView);
+movieCardsPresenter.init();
+const filterPresenter = new FilterPresenter (navigationMenuView, filterModel, movieCardsPresenter, moviesModel);
 filterPresenter.init();

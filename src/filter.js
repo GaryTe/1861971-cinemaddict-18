@@ -1,27 +1,27 @@
-const getValuesToFilters = (temporaryDatas) => {
-  const values1 = [];
-  const values2 = [];
-  const values3 = [];
+const getValuesToFilters = (movies) => {
+  const listToWatch = [];
+  const listAlreadyWatched = [];
+  const listFavorite = [];
   let filter = {};
 
-  for (const temporaryValues of temporaryDatas) {
-    const {userDetails} = temporaryValues;
+  for (const movie of movies) {
+    const {userDetails} = movie;
 
     if (userDetails.watchlist === true) {
-      values1.push (userDetails.watchlist);
+      listToWatch.push (userDetails.watchlist);
     }
     if (userDetails.alreadyWatched === true) {
-      values2.push (userDetails.alreadyWatched);
+      listAlreadyWatched.push (userDetails.alreadyWatched);
     }
     if (userDetails.favorite === true) {
-      values3.push (userDetails.favorite);
+      listFavorite.push (userDetails.favorite);
     }
   }
 
   filter = {
-    watchlist: values1.length,
-    alreadyWatched: values2.length,
-    favorite: values3.length
+    watchlist: listToWatch.length,
+    alreadyWatched: listAlreadyWatched.length,
+    favorite: listFavorite.length
   };
   return filter;
 };

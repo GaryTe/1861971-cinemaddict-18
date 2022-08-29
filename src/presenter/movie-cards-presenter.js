@@ -6,26 +6,28 @@ import {RenderPosition, render, remove} from '../framework/render.js';
 
 const COUNTER = 5;
 
-export default class MovieCardPopupPresenter {
+export default class MovieCardsPresenter {
   #parentElements = null;
   #container = null;
   #element = null;
-  #receivingDataTransmissionModel = null;
+  #moviesModel = null;
   #containerView = null;
   #sortingView = null;
-  #datas = [];
+  #movies = [];
   #messageView = new MessageView;
   #buttonView = new ButtonView;
-  #number = COUNTER;
+  #counterNumber = COUNTER;
   #movieCard = null;
+  #collectionMovieCard = new Set ();
+  #popup = null;
 
 
-  constructor (container, element, receivingDataTransmissionModel, parentElements, containerView, sortingView,) {
+  constructor (container, element, moviesModel, parentElements, containerView, sortingView,) {
     this.#parentElements = parentElements;
     this.#container = container;
     this.#element = element;
-    this.#receivingDataTransmissionModel = receivingDataTransmissionModel;
-    this.#datas = this.#receivingDataTransmissionModel.tasks;
+    this.#moviesModel = moviesModel;
+    this.#movies = this.#moviesModel.movies;
     this.#containerView = containerView;
     this.#sortingView = sortingView;
   }
@@ -36,44 +38,43 @@ export default class MovieCardPopupPresenter {
 
 
   #validationData () {
-    if (this.#datas.every ((data) => data.isArchive)) {
+    if (this.#movies.every ((data) => data.isArchive)) {
       remove (this.#sortingView);
       render(this.#messageView, this.#containerView.element, RenderPosition.AFTERBEGIN);
     } else {
+      remove (this.#messageView);
       this.#transferData ();
     }
   }
 
 
   setChangeData (temporaryDatas) {
-    this.#datas = temporaryDatas;
-    this.#number = COUNTER;
-    const childElements = document.querySelectorAll ('.film-card');
-    for (const childElement of childElements) {
-      this.#container.removeChild (childElement);
-    }
+    this.#movies = temporaryDatas;
+    this.#counterNumber = COUNTER;
+    this.#collectionMovieCard.forEach ((movieCard) => remove (movieCard));
+    this.#collectionMovieCard.clear ();
     remove (this.#movieCard);
     this.#validationData ();
   }
 
 
   #renderMoreCards = () => {
-    this.#datas
-      .slice (this.#number, this.#number + COUNTER)
+    this.#movies
+      .slice (this.#counterNumber, this.#counterNumber + COUNTER)
       .forEach ((value) => this.#renderMovieCardAndPopup (value));
 
-    this.#number += COUNTER;
+    this.#counterNumber += COUNTER;
 
     this.#removeButton ();
   };
 
 
   #transferData () {
-    for (let i = 0; i < Math.min (COUNTER, this.#datas.length); i++) {
-      this.#renderMovieCardAndPopup (this.#datas[i]);
+    for (let i = 0; i < Math.min (COUNTER, this.#movies.length); i++) {
+      this.#renderMovieCardAndPopup (this.#movies[i]);
     }
 
-    if (this.#datas.length > COUNTER) {
+    if (this.#movies.length > COUNTER) {
       render(this.#buttonView, this.#container, RenderPosition.AFTEREND);
       this.#buttonView.setClickHandler (this.#renderMoreCards);
     }
@@ -81,7 +82,7 @@ export default class MovieCardPopupPresenter {
 
 
   #removeButton () {
-    if (this.#number >= this.#datas.length) {
+    if (this.#counterNumber >= this.#movies.length) {
       remove (this.#buttonView);
     }
   }
@@ -98,9 +99,9 @@ export default class MovieCardPopupPresenter {
   #renderPopup = (data) => {
     document.addEventListener('keydown',this.#closePopupKey);
     this.#checkOpenPopups ();
-    const popup = new PopupView (data);
-    popup.setClickHandler (this.#closPopup);
-    render(popup, this.#element, RenderPosition.AFTEREND);
+    this.#popup = new PopupView (data);
+    this.#popup.setClickHandler (this.#closPopup);
+    render(this.#popup, this.#element, RenderPosition.AFTEREND);
     this.#parentElements.classList.add ('hide-overflow');
   };
 
@@ -109,6 +110,7 @@ export default class MovieCardPopupPresenter {
     this.#movieCard = new MovieCardView (data);
     this.#movieCard.setClickHandler (this.#renderPopup,data);
     render(this.#movieCard, this.#container);
+    this.#collectionMovieCard.add (this.#movieCard);
   }
 
 
@@ -121,8 +123,9 @@ export default class MovieCardPopupPresenter {
 
 
   #checkOpenPopups () {
-    const childElement = document.querySelectorAll ('.film-details');
-    if (childElement.length > 0) {this.#parentElements.removeChild (childElement[0]);}
+    if (this.#popup !== null) {
+      remove (this.#popup);
+    }
   }
 
 }

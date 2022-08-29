@@ -108,6 +108,6 @@ const getData = () => {
 };
 
 
-const values = Array.from ({length:13},getData);
+const movies = Array.from ({length:13},getData);
 
-export {values};
+export {movies};

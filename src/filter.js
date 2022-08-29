@@ -1,27 +1,27 @@
 const getValuesToFilters = (movies) => {
-  const listToWatch = [];
-  const listAlreadyWatched = [];
-  const listFavorite = [];
+  const listsToWatch = [];
+  const listsAlreadyWatched = [];
+  const listsFavorite = [];
   let filter = {};
 
   for (const movie of movies) {
     const {userDetails} = movie;
 
     if (userDetails.watchlist === true) {
-      listToWatch.push (userDetails.watchlist);
+      listsToWatch.push (userDetails.watchlist);
     }
     if (userDetails.alreadyWatched === true) {
-      listAlreadyWatched.push (userDetails.alreadyWatched);
+      listsAlreadyWatched.push (userDetails.alreadyWatched);
     }
     if (userDetails.favorite === true) {
-      listFavorite.push (userDetails.favorite);
+      listsFavorite.push (userDetails.favorite);
     }
   }
 
   filter = {
-    watchlist: listToWatch.length,
-    alreadyWatched: listAlreadyWatched.length,
-    favorite: listFavorite.length
+    watchlist: listsToWatch.length,
+    alreadyWatched: listsAlreadyWatched.length,
+    favorite: listsFavorite.length
   };
   return filter;
 };

@@ -41,7 +41,6 @@ export default class NavigationMenuView extends AbstractView {
 
 
   #click = (filterName) => {
-    //const key = evt.target.hash;
     this._callback.click (filterName);
   };
 

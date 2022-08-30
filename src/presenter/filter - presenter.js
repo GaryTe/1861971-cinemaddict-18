@@ -1,7 +1,7 @@
 const FILTER_NAME = {
-  watchlist: 'watchlist',
-  history: 'alreadyWatched',
-  favorites: 'favorite'
+  '#watchlist': 'watchlist',
+  '#history': 'alreadyWatched',
+  '#favorites': 'favorite'
 };
 
 export default class FilterPresenter {
@@ -24,7 +24,7 @@ export default class FilterPresenter {
 
 
   #callFilterModel = (filterName) => {
-    if (filterName === 'all') {
+    if (filterName === '#all') {
       const movies = this.#receivingDataTransmissionModel.movies;
       this.#movieCardsPresenter.setChangeData (movies);
     } else {

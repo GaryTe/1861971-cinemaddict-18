@@ -1,5 +1,11 @@
 import AbstractView from '../framework/view/abstract-view.js';
 
+const FILTER_NAME = [
+  'all',
+  'watchlist',
+  'alreadyWatched',
+  'favorite'
+];
 
 const createFilter = (data) => {
   const {watchlist, alreadyWatched, favorite} = data;
@@ -28,15 +34,15 @@ export default class NavigationMenuView extends AbstractView {
   setClickHandler (callback) {
     this._callback.click = callback;
     const buttons = this.element.querySelectorAll ('.main-navigation__item');
-    for (const button of buttons) {
-      button.addEventListener ('click', this.#click);
+    for (let i = 0; i < buttons.length; i++) {
+      buttons[i].addEventListener ('click', () => {this.#click (FILTER_NAME [i]);});
     }
   }
 
 
-  #click = (evt) => {
-    const key = evt.target.hash;
-    this._callback.click (key);
+  #click = (filterName) => {
+    //const key = evt.target.hash;
+    this._callback.click (filterName);
   };
 
 }

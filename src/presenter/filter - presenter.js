@@ -1,9 +1,3 @@
-const FILTER_NAME = {
-  '#watchlist': 'watchlist',
-  '#history': 'alreadyWatched',
-  '#favorites': 'favorite'
-};
-
 export default class FilterPresenter {
   #navigationMenuView = null;
   #filterModel = null;
@@ -24,11 +18,11 @@ export default class FilterPresenter {
 
 
   #callFilterModel = (filterName) => {
-    if (filterName === '#all') {
+    if (filterName === 'all') {
       const movies = this.#receivingDataTransmissionModel.movies;
       this.#movieCardsPresenter.setChangeData (movies);
     } else {
-      const sortMovies = this.#filterModel.setSortDataByKey (FILTER_NAME[filterName]);
+      const sortMovies = this.#filterModel.setSortDataByKey (filterName);
       this.#movieCardsPresenter.setChangeData (sortMovies);
     }
   };

@@ -108,6 +108,6 @@ const getData = () => {
 };
 
 
-const movies = Array.from ({length:9},getData);
+const movies = Array.from ({length:17},getData);
 
 export {movies};

@@ -23,12 +23,12 @@ export default class FilterPresenter {
   }
 
 
-  #callFilterModel = (filterNames) => {
-    if (filterNames === 'all') {
+  #callFilterModel = (filterName) => {
+    if (filterName === 'all') {
       const movies = this.#receivingDataTransmissionModel.movies;
       this.#movieCardsPresenter.setChangeData (movies);
     } else {
-      const sortMovies = this.#filterModel.setSortDataByKey (FILTER_NAME[filterNames]);
+      const sortMovies = this.#filterModel.setSortDataByKey (FILTER_NAME[filterName]);
       this.#movieCardsPresenter.setChangeData (sortMovies);
     }
   };

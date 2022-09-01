@@ -1,4 +1,5 @@
 import { getRandomInteger } from './utils';
+import { nanoid } from 'nanoid';
 
 const date = [
   '1984-05-11T00:45:00.000Z',
@@ -66,8 +67,8 @@ const getData = () => {
   const numberId = generateImageAddress ();
 
   return {
+    'id': nanoid(),
     'index': numberId,
-    'id': '0',
     'comments': generateComment (),
     'filmInfo': {
       'poster': descriptions [numberId],
@@ -99,10 +100,10 @@ const getData = () => {
       'description': 'Oscar-winning film, a war drama about two young people, from the creators of timeless classic "Nu, Pogodi!" and "Alice in Wonderland", with the best fight scenes since Bruce Lee.'
     },
     'userDetails': {
-      'watchlist': Boolean (getRandomInteger(0, 1)),
-      'alreadyWatched': Boolean (getRandomInteger(0, 1)),
+      'watchlist': false, //Boolean (getRandomInteger(0, 1)),
+      'alreadyWatched': false, //Boolean (getRandomInteger(0, 1)),
       'watchingDate': '2019-04-12T16:12:32.554Z',
-      'favorite': Boolean (getRandomInteger(0, 1))
+      'favorite': false //Boolean (getRandomInteger(0, 1))
     }
   };
 };

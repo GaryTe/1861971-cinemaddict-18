@@ -1,116 +1,73 @@
 import MovieCardView from '../view/movie-card-view.js';
-import ButtonView from '../view/button-view.js';
 import PopupView from '../view/popup-view.js';
-import MessageView from '../view/message-view.js';
-import {RenderPosition, render, remove} from '../framework/render.js';
-
-const COUNTER = 5;
+import {RenderPosition, render, remove, replace} from '../framework/render.js';
 
 export default class MovieCardsPresenter {
-  #parentElements = null;
-  #container = null;
-  #element = null;
-  #moviesModel = null;
-  #containerView = null;
-  #sortingView = null;
-  #movies = [];
-  #messageView = new MessageView;
-  #buttonView = new ButtonView;
-  #counterNumber = COUNTER;
   #movieCard = null;
-  #collectionMovieCard = new Set ();
+  #container = null;
   #popup = null;
+  #element = null;
+  #parentElements = null;
+  #taskChange = null;
+  #movie = null;
 
 
-  constructor (container, element, moviesModel, parentElements, containerView, sortingView,) {
-    this.#parentElements = parentElements;
+  constructor (container, element, parentElements, taskChange) {
     this.#container = container;
     this.#element = element;
-    this.#moviesModel = moviesModel;
-    this.#movies = this.#moviesModel.movies;
-    this.#containerView = containerView;
-    this.#sortingView = sortingView;
+    this.#parentElements = parentElements;
+    this.#taskChange = taskChange;
   }
 
-  init = () => {
-    this.#validationData ();
-  };
 
+  init (movie) {
+    this.#movie = movie;
 
-  #validationData () {
-    if (this.#movies.every ((data) => data.isArchive)) {
-      remove (this.#sortingView);
-      render(this.#messageView, this.#containerView.element, RenderPosition.AFTERBEGIN);
-    } else {
-      remove (this.#messageView);
-      this.#transferData ();
+    const prevMovieCard = this.#movieCard;
+    const prevPopup = this.#popup;
+
+    this.#movieCard = new MovieCardView (movie);
+
+    this.#movieCard.setClickHandler (this.#renderPopup);
+    this.#movieCard.setAddToWatchlis (this.#addToWatchlis);
+    this.#movieCard.setAlreadyWatched (this.#alreadyWatched);
+    this.#movieCard.setAddToFavorites (this.#addToFavorites);
+
+    if (prevMovieCard === null) {
+      render(this.#movieCard, this.#container);
+      return;
+    }
+
+    if (this.#container.contains(prevMovieCard.element)) {
+      replace (this.#movieCard, prevMovieCard);
+      this.#popup = new PopupView (this.#movie);
+      this.#addHandlersToPopup ();
+      replace (this.#popup, prevPopup);
     }
   }
 
 
-  setChangeData (temporaryDatas) {
-    this.#movies = temporaryDatas;
-    this.#counterNumber = COUNTER;
-    this.#collectionMovieCard.forEach ((movieCard) => remove (movieCard));
-    this.#collectionMovieCard.clear ();
-    remove (this.#movieCard);
-    this.#validationData ();
-  }
-
-
-  #renderMoreCards = () => {
-    this.#movies
-      .slice (this.#counterNumber, this.#counterNumber + COUNTER)
-      .forEach ((value) => this.#renderMovieCardAndPopup (value));
-
-    this.#counterNumber += COUNTER;
-
-    this.#removeButton ();
-  };
-
-
-  #transferData () {
-    for (let i = 0; i < Math.min (COUNTER, this.#movies.length); i++) {
-      this.#renderMovieCardAndPopup (this.#movies[i]);
-    }
-
-    if (this.#movies.length > COUNTER) {
-      render(this.#buttonView, this.#container, RenderPosition.AFTEREND);
-      this.#buttonView.setClickHandler (this.#renderMoreCards);
-    }
-  }
-
-
-  #removeButton () {
-    if (this.#counterNumber >= this.#movies.length) {
-      remove (this.#buttonView);
-    }
-  }
-
-
-  #closePopupKey = (evt) => {
-    if(evt.key === 'Esc' || evt.key === 'Escape') {
-      this.#closPopup();
-      document.removeEventListener('keydown', this.#closePopupKey);
-    }
-  };
-
-
-  #renderPopup = (data) => {
+  #renderPopup = (movie) => {
     document.addEventListener('keydown',this.#closePopupKey);
     this.#checkOpenPopups ();
-    this.#popup = new PopupView (data);
-    this.#popup.setClickHandler (this.#closPopup);
+    this.#popup = new PopupView (movie);
+    this.#addHandlersToPopup ();
     render(this.#popup, this.#element, RenderPosition.AFTEREND);
     this.#parentElements.classList.add ('hide-overflow');
+
   };
 
 
-  #renderMovieCardAndPopup (data) {
-    this.#movieCard = new MovieCardView (data);
-    this.#movieCard.setClickHandler (this.#renderPopup,data);
-    render(this.#movieCard, this.#container);
-    this.#collectionMovieCard.add (this.#movieCard);
+  #addHandlersToPopup = () => {
+    this.#popup.setClickHandler (this.#closPopup);
+    this.#popup.setAddToWatchlis (this.#addToWatchlis);
+    this.#popup.setAlreadyWatched (this.#alreadyWatched);
+    this.#popup.setAddToFavorites (this.#addToFavorites);
+  };
+
+
+  #checkOpenPopups () {
+    remove (this.#popup);
   }
 
 
@@ -122,10 +79,30 @@ export default class MovieCardsPresenter {
   };
 
 
-  #checkOpenPopups () {
-    if (this.#popup !== null) {
-      remove (this.#popup);
+  #closePopupKey = (evt) => {
+    if(evt.key === 'Esc' || evt.key === 'Escape') {
+      this.#closPopup();
+      document.removeEventListener('keydown', this.#closePopupKey);
     }
+  };
+
+
+  destroy () {
+    remove(this.#movieCard);
   }
 
+
+  #addToWatchlis = () => {
+    this.#taskChange ({...this.#movie, userDetails: {...this.#movie.userDetails,watchlist : !this.#movie.userDetails.watchlist}});
+  };
+
+
+  #alreadyWatched = () => {
+    this.#taskChange ({...this.#movie, userDetails: {...this.#movie.userDetails,alreadyWatched : !this.#movie.userDetails.alreadyWatched}});
+  };
+
+
+  #addToFavorites = () => {
+    this.#taskChange ({...this.#movie, userDetails: {...this.#movie.userDetails,favorite : !this.#movie.userDetails.favorite}});
+  };
 }

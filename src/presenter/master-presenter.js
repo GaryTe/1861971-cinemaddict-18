@@ -1,0 +1,130 @@
+import ButtonView from '../view/button-view.js';
+import MessageView from '../view/message-view.js';
+import SortingView from '../view/sorting-view.js';
+import MovieCardsPresenter from './movie-cards-presenter.js';
+import {RenderPosition, render, remove} from '../framework/render.js';
+import {updateItem} from '../utils.js';
+
+const COUNTER = 5;
+
+export default class MasterPresenter {
+  #parentElements = null;
+  #container = null;
+  #element = null;
+  #moviesModel = null;
+  #containerView = null;
+  #navigationMenuView = null;
+
+  #messageView = new MessageView;
+  #buttonView = new ButtonView;
+  #sortingView = new SortingView;
+
+  #movies = [];
+  #counterNumber = COUNTER;
+  #collectionMovieCard = new Map ();
+
+
+  constructor (container, element, moviesModel, parentElements, containerView, navigationMenuView) {
+    this.#parentElements = parentElements;
+    this.#container = container;
+    this.#element = element;
+    this.#moviesModel = moviesModel;
+    this.#movies = this.#moviesModel.movies;
+    this.#containerView = containerView;
+    this.#navigationMenuView = navigationMenuView;
+  }
+
+  init = () => {
+    this.#validationData ();
+  };
+
+
+  #validationData () {
+    if (this.#movies.every ((data) => data.isArchive)) {
+      this.#removeSortingView ();
+      this.#renderMessageView ();
+    } else {
+      this.#removeMessageView ();
+      this.#renderSortingView ();
+      this.#transferData ();
+    }
+  }
+
+
+  #removeSortingView () {
+    remove (this.#sortingView);
+  }
+
+
+  #renderMessageView () {
+    render(this.#messageView, this.#containerView.element, RenderPosition.AFTERBEGIN);
+  }
+
+
+  #removeMessageView () {
+    remove (this.#messageView);
+  }
+
+
+  #renderSortingView () {
+    render(this.#sortingView, this.#navigationMenuView.element, RenderPosition.AFTEREND);
+  }
+
+
+  setChangeData (temporaryDatas) {
+    this.#movies = temporaryDatas;
+    this.#counterNumber = COUNTER;
+    this.#collectionMovieCard.forEach ((movieCard) => movieCard.destroy());
+    this.#collectionMovieCard.clear ();
+    this.#validationData ();
+  }
+
+
+  #renderMoreCards = () => {
+    this.#movies
+      .slice (this.#counterNumber, this.#counterNumber + COUNTER)
+      .forEach ((value) => this.#renderMovieCardAndPopup (value));
+
+    this.#counterNumber += COUNTER;
+
+    this.#removeButton ();
+  };
+
+
+  #transferData () {
+    for (let i = 0; i < Math.min (COUNTER, this.#movies.length); i++) {
+      this.#renderMovieCardAndPopup (this.#movies[i]);
+    }
+
+    if (this.#movies.length > COUNTER) {
+      this.#renderButtonView ();
+    }
+  }
+
+
+  #renderButtonView () {
+    render(this.#buttonView, this.#container, RenderPosition.AFTEREND);
+    this.#buttonView.setClickHandler (this.#renderMoreCards);
+  }
+
+
+  #removeButton () {
+    if (this.#counterNumber >= this.#movies.length) {
+      remove (this.#buttonView);
+    }
+  }
+
+
+  #renderMovieCardAndPopup (data) {
+    const masterPresenter = new MovieCardsPresenter (this.#container, this.#element, this.#parentElements, this.#taskChange);
+    masterPresenter.init (data);
+    this.#collectionMovieCard.set (data.id, masterPresenter);
+  }
+
+
+  #taskChange = (updatedTask) => {
+    this.#movies = updateItem (this.#movies, updatedTask);
+    this.#collectionMovieCard.get (updatedTask.id).init (updatedTask);
+  };
+
+}

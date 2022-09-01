@@ -1,13 +1,13 @@
 export default class FilterPresenter {
   #navigationMenuView = null;
   #filterModel = null;
-  #movieCardsPresenter = null;
+  #masterPresenter = null;
   #receivingDataTransmissionModel = null;
 
-  constructor (navigationMenuView, filterModel, movieCardsPresenter, receivingDataTransmissionModel) {
+  constructor (navigationMenuView, filterModel, masterPresenter, receivingDataTransmissionModel) {
     this.#navigationMenuView = navigationMenuView;
     this.#filterModel = filterModel;
-    this.#movieCardsPresenter = movieCardsPresenter;
+    this.#masterPresenter = masterPresenter;
     this.#receivingDataTransmissionModel = receivingDataTransmissionModel;
   }
 
@@ -20,10 +20,10 @@ export default class FilterPresenter {
   #callFilterModel = (filterName) => {
     if (filterName === 'all') {
       const movies = this.#receivingDataTransmissionModel.movies;
-      this.#movieCardsPresenter.setChangeData (movies);
+      this.#masterPresenter.setChangeData (movies);
     } else {
       const sortMovies = this.#filterModel.setSortDataByKey (filterName);
-      this.#movieCardsPresenter.setChangeData (sortMovies);
+      this.#masterPresenter.setChangeData (sortMovies);
     }
   };
 

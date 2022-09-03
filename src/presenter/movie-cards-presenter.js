@@ -54,7 +54,6 @@ export default class MovieCardsPresenter {
     this.#addHandlersToPopup ();
     render(this.#popup, this.#element, RenderPosition.AFTEREND);
     this.#parentElements.classList.add ('hide-overflow');
-
   };
 
 
@@ -67,7 +66,10 @@ export default class MovieCardsPresenter {
 
 
   #checkOpenPopups () {
-    remove (this.#popup);
+    const popups = document.querySelectorAll('.film-details');
+    if (popups.length > 0){
+      this.#parentElements.removeChild(popups[0]);
+    }
   }
 
 

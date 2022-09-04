@@ -1,16 +1,16 @@
 import ButtonView from '../view/button-view.js';
 import MessageView from '../view/message-view.js';
 import SortingView from '../view/sorting-view.js';
-import MovieCardsPresenter from './movie-cards-presenter.js';
+import MovieCardPresenter from './movie-cards-presenter.js';
 import {RenderPosition, render, remove} from '../framework/render.js';
 import {updateItem} from '../utils.js';
 
 const COUNTER = 5;
 
 export default class MasterPresenter {
-  #parentElements = null;
+  #bodyElement = null;
   #container = null;
-  #element = null;
+  #footerElement = null;
   #moviesModel = null;
   #containerView = null;
   #navigationMenuView = null;
@@ -24,10 +24,10 @@ export default class MasterPresenter {
   #collectionMovieCard = new Map ();
 
 
-  constructor (container, element, moviesModel, parentElements, containerView, navigationMenuView) {
-    this.#parentElements = parentElements;
+  constructor (container, footerElement, moviesModel, bodyElement, containerView, navigationMenuView) {
+    this.#bodyElement = bodyElement;
     this.#container = container;
-    this.#element = element;
+    this.#footerElement = footerElement;
     this.#moviesModel = moviesModel;
     this.#movies = this.#moviesModel.movies;
     this.#containerView = containerView;
@@ -35,11 +35,11 @@ export default class MasterPresenter {
   }
 
   init = () => {
-    this.#validationData ();
+    this.#checkFilmContainer ();
   };
 
 
-  #validationData () {
+  #checkFilmContainer () {
     if (this.#movies.every ((data) => data.isArchive)) {
       this.#removeSortingView ();
       this.#renderMessageView ();
@@ -76,7 +76,7 @@ export default class MasterPresenter {
     this.#counterNumber = COUNTER;
     this.#collectionMovieCard.forEach ((movieCard) => movieCard.destroy());
     this.#collectionMovieCard.clear ();
-    this.#validationData ();
+    this.#checkFilmContainer ();
   }
 
 
@@ -116,13 +116,13 @@ export default class MasterPresenter {
 
 
   #renderMovieCardAndPopup (data) {
-    const masterPresenter = new MovieCardsPresenter (this.#container, this.#element, this.#parentElements, this.#taskChange);
-    masterPresenter.init (data);
-    this.#collectionMovieCard.set (data.id, masterPresenter);
+    const movieCardPresenter = new MovieCardPresenter (this.#container, this.#footerElement, this.#bodyElement, this.#movieChange);
+    movieCardPresenter.init (data);
+    this.#collectionMovieCard.set (data.id, movieCardPresenter);
   }
 
 
-  #taskChange = (updatedTask) => {
+  #movieChange = (updatedTask) => {
     this.#movies = updateItem (this.#movies, updatedTask);
     this.#collectionMovieCard.get (updatedTask.id).init (updatedTask);
   };

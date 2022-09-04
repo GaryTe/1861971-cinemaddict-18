@@ -11,8 +11,8 @@ import {render} from './framework/render.js';
 
 const headerElement = document.querySelector('.header');
 const mainElement = document.querySelector('.main');
-const footerElement = document.querySelector('.footer__statistics');
-const element = document.querySelector('footer');
+const sectionElement = document.querySelector('.footer__statistics');
+const footerElement = document.querySelector('footer');
 
 
 const moviesModel = new MoviesModel();
@@ -25,12 +25,12 @@ const filterModel = new FilterModel (moviesModel);
 render(new UserNameView(), headerElement);
 render(navigationMenuView, mainElement);
 render(containerView, mainElement);
-render(new NumberOfFilmsView(), footerElement);
+render(new NumberOfFilmsView(), sectionElement);
 
 const container = document.querySelector('.films-list__container');
-const parentElements = document.querySelector ('body');
+const bodyElement = document.querySelector ('body');
 
-const masterPresenter = new MasterPresenter(container, element, moviesModel, parentElements, containerView, navigationMenuView);
+const masterPresenter = new MasterPresenter(container, footerElement, moviesModel, bodyElement, containerView, navigationMenuView);
 masterPresenter.init();
 const filterPresenter = new FilterPresenter (navigationMenuView, filterModel, masterPresenter, moviesModel);
 filterPresenter.init();

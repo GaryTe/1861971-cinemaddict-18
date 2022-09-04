@@ -6,17 +6,17 @@ export default class MovieCardsPresenter {
   #movieCard = null;
   #container = null;
   #popup = null;
-  #element = null;
-  #parentElements = null;
-  #taskChange = null;
+  #footerElement = null;
+  #bodyElement = null;
+  #movieChange = null;
   #movie = null;
 
 
-  constructor (container, element, parentElements, taskChange) {
+  constructor (container, footerElement, bodyElement, movieChange) {
     this.#container = container;
-    this.#element = element;
-    this.#parentElements = parentElements;
-    this.#taskChange = taskChange;
+    this.#footerElement = footerElement;
+    this.#bodyElement = bodyElement;
+    this.#movieChange = movieChange;
   }
 
 
@@ -52,8 +52,8 @@ export default class MovieCardsPresenter {
     this.#checkOpenPopups ();
     this.#popup = new PopupView (movie);
     this.#addHandlersToPopup ();
-    render(this.#popup, this.#element, RenderPosition.AFTEREND);
-    this.#parentElements.classList.add ('hide-overflow');
+    render(this.#popup, this.#footerElement, RenderPosition.AFTEREND);
+    this.#bodyElement.classList.add ('hide-overflow');
   };
 
 
@@ -68,16 +68,16 @@ export default class MovieCardsPresenter {
   #checkOpenPopups () {
     const popups = document.querySelectorAll('.film-details');
     if (popups.length > 0){
-      this.#parentElements.removeChild(popups[0]);
+      this.#bodyElement.removeChild(popups[0]);
     }
   }
 
 
   #closPopup = () => {
     document.removeEventListener('keydown', this.#closePopupKey);
-    const childElement = document.querySelector ('.film-details');
-    this.#parentElements.removeChild (childElement);
-    this.#parentElements.classList.remove ('hide-overflow');
+    const popupElement = document.querySelector ('.film-details');
+    this.#bodyElement.removeChild (popupElement);
+    this.#bodyElement.classList.remove ('hide-overflow');
   };
 
 
@@ -95,16 +95,16 @@ export default class MovieCardsPresenter {
 
 
   #addToWatchlis = () => {
-    this.#taskChange ({...this.#movie, userDetails: {...this.#movie.userDetails,watchlist : !this.#movie.userDetails.watchlist}});
+    this.#movieChange ({...this.#movie, userDetails: {...this.#movie.userDetails,watchlist : !this.#movie.userDetails.watchlist}});
   };
 
 
   #alreadyWatched = () => {
-    this.#taskChange ({...this.#movie, userDetails: {...this.#movie.userDetails,alreadyWatched : !this.#movie.userDetails.alreadyWatched}});
+    this.#movieChange ({...this.#movie, userDetails: {...this.#movie.userDetails,alreadyWatched : !this.#movie.userDetails.alreadyWatched}});
   };
 
 
   #addToFavorites = () => {
-    this.#taskChange ({...this.#movie, userDetails: {...this.#movie.userDetails,favorite : !this.#movie.userDetails.favorite}});
+    this.#movieChange ({...this.#movie, userDetails: {...this.#movie.userDetails,favorite : !this.#movie.userDetails.favorite}});
   };
 }

@@ -20,6 +20,7 @@ const createFilter = (data) => {
 
 export default class NavigationMenuView extends AbstractView {
   #data = {};
+  #buttons = [];
 
   constructor (data) {
     super ();
@@ -33,9 +34,12 @@ export default class NavigationMenuView extends AbstractView {
 
   setClickHandler (callback) {
     this._callback.click = callback;
-    const buttons = this.element.querySelectorAll ('.main-navigation__item');
-    for (let i = 0; i < buttons.length; i++) {
-      buttons[i].addEventListener ('click', () => {this.#click (FILTER_NAME [i]);});
+    this.#buttons = this.element.querySelectorAll ('.main-navigation__item');
+    for (let i = 0; i < this.#buttons.length; i++) {
+      this.#buttons[i].addEventListener ('click', (evt) => {
+        this.#checkClass (evt);
+        this.#click (FILTER_NAME [i]);
+      });
     }
   }
 
@@ -43,5 +47,15 @@ export default class NavigationMenuView extends AbstractView {
   #click = (filterName) => {
     this._callback.click (filterName);
   };
+
+
+  #checkClass (evt) {
+    for (const button of this.#buttons) {
+      if (button.classList.contains ('main-navigation__item--active')) {
+        button.classList.remove ('main-navigation__item--active');
+      }
+    }
+    evt.target.classList.add ('main-navigation__item--active');
+  }
 
 }

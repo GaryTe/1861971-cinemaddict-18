@@ -1,6 +1,5 @@
 import ButtonView from '../view/button-view.js';
 import MessageView from '../view/message-view.js';
-import SortingView from '../view/sorting-view.js';
 import MovieCardPresenter from './movie-cards-presenter.js';
 import {RenderPosition, render, remove} from '../framework/render.js';
 import {updateItem} from '../utils.js';
@@ -14,17 +13,17 @@ export default class MasterPresenter {
   #moviesModel = null;
   #containerView = null;
   #navigationMenuView = null;
+  #sortingView = null;
 
   #messageView = new MessageView;
   #buttonView = new ButtonView;
-  #sortingView = new SortingView;
 
   #movies = [];
   #counterNumber = COUNTER;
   #collectionMovieCard = new Map ();
 
 
-  constructor (container, footerElement, moviesModel, bodyElement, containerView, navigationMenuView) {
+  constructor (container, footerElement, moviesModel, bodyElement, containerView, navigationMenuView, sortingView) {
     this.#bodyElement = bodyElement;
     this.#container = container;
     this.#footerElement = footerElement;
@@ -32,6 +31,7 @@ export default class MasterPresenter {
     this.#movies = this.#moviesModel.movies;
     this.#containerView = containerView;
     this.#navigationMenuView = navigationMenuView;
+    this.#sortingView = sortingView;
   }
 
   init = () => {

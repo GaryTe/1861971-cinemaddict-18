@@ -34,7 +34,7 @@ export default class SortModel {
   #sortByDate () {
     const sortMovies = this.#movies.slice ();
     sortMovies.sort ((a,b) => {
-      if (a.humanizeYear (a.filmInfo.release.date) < b.humanizeYear (b.filmInfo.release.date)) {
+      if (humanizeYear (a.filmInfo.release.date) < humanizeYear (b.filmInfo.release.date)) {
         return -1;
       }
     });

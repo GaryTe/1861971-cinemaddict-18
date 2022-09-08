@@ -28,7 +28,6 @@ const createMovieCard = (data) => {
 export default class MovieCardView extends AbstractView{
 
   #data = {};
-  _value = {};
 
   constructor (data) {
     super ();
@@ -41,14 +40,46 @@ export default class MovieCardView extends AbstractView{
   }
 
 
-  setClickHandler (callback, data) {
-    this._value = data;
+  setClickHandler (callback) {
     this._callback.click = callback;
     this.element.querySelector ('.film-card__link').addEventListener ('click', this.#click);
   }
 
 
   #click = () => {
-    this._callback.click (this._value);
+    this._callback.click (this.#data);
+  };
+
+
+  setAddToWatchlis (callback) {
+    this._callback.addToWatchlis = callback;
+    this.element.querySelector ('.film-card__controls-item--add-to-watchlist').addEventListener ('click', this.#addToWatchlis);
+  }
+
+
+  #addToWatchlis = () => {
+    this._callback.addToWatchlis ();
+  };
+
+
+  setAlreadyWatched (callback) {
+    this._callback.alreadyWatched = callback;
+    this.element.querySelector ('.film-card__controls-item--mark-as-watched').addEventListener ('click', this.#alreadyWatched);
+  }
+
+
+  #alreadyWatched = () => {
+    this._callback.alreadyWatched ();
+  };
+
+
+  setAddToFavorites (callback) {
+    this._callback.addToFavorites = callback;
+    this.element.querySelector ('.film-card__controls-item--favorite').addEventListener ('click', this.#addToFavorites);
+  }
+
+
+  #addToFavorites = () => {
+    this._callback.addToFavorites ();
   };
 }

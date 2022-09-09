@@ -1,8 +1,9 @@
-import AbstractView from '../framework/view/abstract-view.js';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { humanizeDateMonthYear, humanizeHour, humanizeMinute, getRandomInteger } from '../utils.js';
 
+
 const createPopup = (data) => {
-  const {index, filmInfo, comments, userDetails} = data;
+  const {index, filmInfo, comments, userDetails, emotion} = data;
 
   const getGenre = () => {
     const datas = filmInfo.genre.slice (0,getRandomInteger (0, 2));
@@ -12,6 +13,14 @@ const createPopup = (data) => {
   };
 
   const genres = getGenre();
+
+
+  const putEmotion = () => {
+    if (emotion === null){
+      return '' ;
+    }
+    return `<img src="images/emoji/${emotion}.png" width="55" height="55" alt="emoji"></img>`;
+  };
 
   return (`<section class="film-details">
 <div class="film-details__inner">
@@ -146,7 +155,7 @@ const createPopup = (data) => {
       </ul>
 
       <form class="film-details__new-comment" action="" method="get">
-        <div class="film-details__add-emoji-label"></div>
+        <div class="film-details__add-emoji-label">${putEmotion ()}</div>
 
         <label class="film-details__comment-label">
           <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
@@ -180,17 +189,33 @@ const createPopup = (data) => {
 </section>`);
 };
 
-export default class PopupView extends AbstractView {
-  #data = {};
+export default class PopupView extends AbstractStatefulView {
+  #scrollCoordinate = 0;
 
   constructor (data) {
     super ();
-    this.#data = data;
+    this._state = PopupView.popupToState (data);
+    this.#addHandler ();
+    this.#scroll ();
   }
 
+
   get template() {
-    return createPopup(this.#data);
+    return createPopup(this._state);
   }
+
+
+  _restoreHandlers = () => {
+    this.#addHandler ();
+    this.#scroll ();
+  };
+
+
+  #scroll = () => {
+    this.element.addEventListener ('scroll', () => {
+      this.#scrollCoordinate = this.element.scrollTop;
+    });
+  };
 
 
   setClickHandler (callback) {
@@ -211,7 +236,7 @@ export default class PopupView extends AbstractView {
 
 
   #addToWatchlis = () => {
-    this._callback.addToWatchlis ();
+    this._callback.addToWatchlis (this.#scrollCoordinate);
   };
 
 
@@ -222,7 +247,7 @@ export default class PopupView extends AbstractView {
 
 
   #alreadyWatched = () => {
-    this._callback.alreadyWatched ();
+    this._callback.alreadyWatched (this.#scrollCoordinate);
   };
 
 
@@ -233,6 +258,35 @@ export default class PopupView extends AbstractView {
 
 
   #addToFavorites = () => {
-    this._callback.addToFavorites ();
+    this._callback.addToFavorites (this.#scrollCoordinate);
   };
+
+
+  #addHandler () {
+    const emotions = this.element.querySelectorAll ('.film-details__emoji-item');
+    for (const emotion of emotions) {
+      emotion.addEventListener ('change', this.#choiceOfEmotion);
+    }
+    this.element.querySelector ('.film-details__comment-input').addEventListener ('input', this.#descriptionInputHandler);
+  }
+
+
+  #choiceOfEmotion = (evt) => {
+    evt.preventDefault();
+    this.updateElement ({
+      emotion: evt.target.value
+    });
+    this.element.scrollBy (0, this.#scrollCoordinate);
+  };
+
+
+  #descriptionInputHandler = (evt) => {
+    evt.preventDefault();
+    this._setState({
+      description: evt.target.value,
+    });
+  };
+
+
+  static popupToState = (popup) => ({...popup, emotion: null, description: null});
 }

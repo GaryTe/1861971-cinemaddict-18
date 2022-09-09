@@ -10,6 +10,7 @@ export default class MovieCardsPresenter {
   #bodyElement = null;
   #movieChange = null;
   #movie = null;
+  #scrollCoordinate = 0;
 
 
   constructor (container, footerElement, bodyElement, movieChange) {
@@ -43,6 +44,7 @@ export default class MovieCardsPresenter {
       this.#popup = new PopupView (this.#movie);
       this.#addHandlersToPopup ();
       replace (this.#popup, prevPopup);
+      this.#putPopupByCoordinates ();
     }
   }
 
@@ -53,6 +55,7 @@ export default class MovieCardsPresenter {
     this.#popup = new PopupView (movie);
     this.#addHandlersToPopup ();
     render(this.#popup, this.#footerElement, RenderPosition.AFTEREND);
+    this.#putPopupByCoordinates ();
     this.#bodyElement.classList.add ('hide-overflow');
   };
 
@@ -64,6 +67,10 @@ export default class MovieCardsPresenter {
     this.#popup.setAddToFavorites (this.#addToFavorites);
   };
 
+
+  #putPopupByCoordinates () {
+    this.#popup.element.scrollBy (0, this.#scrollCoordinate);
+  }
 
   #checkOpenPopups () {
     const popups = document.querySelectorAll('.film-details');
@@ -78,6 +85,7 @@ export default class MovieCardsPresenter {
     const popupElement = document.querySelector ('.film-details');
     this.#bodyElement.removeChild (popupElement);
     this.#bodyElement.classList.remove ('hide-overflow');
+    this.#scrollCoordinate = 0;
   };
 
 
@@ -94,17 +102,20 @@ export default class MovieCardsPresenter {
   }
 
 
-  #addToWatchlis = () => {
+  #addToWatchlis = (coordinate) => {
+    this.#scrollCoordinate = coordinate;
     this.#movieChange ({...this.#movie, userDetails: {...this.#movie.userDetails,watchlist : !this.#movie.userDetails.watchlist}});
   };
 
 
-  #alreadyWatched = () => {
+  #alreadyWatched = (coordinate) => {
+    this.#scrollCoordinate = coordinate;
     this.#movieChange ({...this.#movie, userDetails: {...this.#movie.userDetails,alreadyWatched : !this.#movie.userDetails.alreadyWatched}});
   };
 
 
-  #addToFavorites = () => {
+  #addToFavorites = (coordinate) => {
+    this.#scrollCoordinate = coordinate;
     this.#movieChange ({...this.#movie, userDetails: {...this.#movie.userDetails,favorite : !this.#movie.userDetails.favorite}});
   };
 }

@@ -1,9 +1,9 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-import { humanizeDateMonthYear, humanizeHour, humanizeMinute, getRandomInteger } from '../utils.js';
+import { humanizeDateMonthYear, humanizeHour, humanizeMinute, getRandomInteger} from '../utils.js';
 
 
 const createPopup = (data) => {
-  const {index, filmInfo, comments, userDetails, emotion} = data;
+  const {index, filmInfo, comments, userDetails, emotion, description} = data;
 
   const getGenre = () => {
     const datas = filmInfo.genre.slice (0,getRandomInteger (0, 2));
@@ -158,7 +158,7 @@ const createPopup = (data) => {
         <div class="film-details__add-emoji-label">${putEmotion ()}</div>
 
         <label class="film-details__comment-label">
-          <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
+          <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${description === null ? '' : description}</textarea>
         </label>
 
         <div class="film-details__emoji-list">
@@ -208,6 +208,10 @@ export default class PopupView extends AbstractStatefulView {
   _restoreHandlers = () => {
     this.#addHandler ();
     this.#scroll ();
+    this.setClickHandler (this._callback.click);
+    this.setAddToWatchlis (this._callback.addToWatchlis);
+    this.setAlreadyWatched (this._callback.alreadyWatched);
+    this.setAddToFavorites (this._callback.addToFavorites);
   };
 
 

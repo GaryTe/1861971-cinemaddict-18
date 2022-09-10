@@ -11,6 +11,7 @@ export default class MovieCardsPresenter {
   #movieChange = null;
   #movie = null;
   #scrollCoordinate = 0;
+  #film = null;
 
 
   constructor (container, footerElement, bodyElement, movieChange) {
@@ -65,6 +66,8 @@ export default class MovieCardsPresenter {
     this.#popup.setAddToWatchlis (this.#addToWatchlis);
     this.#popup.setAlreadyWatched (this.#alreadyWatched);
     this.#popup.setAddToFavorites (this.#addToFavorites);
+    this.#popup.setDeleteComments (this.#deleteComments);
+    this.#popup.setReturnNewData (this.#getNewData);
   };
 
 
@@ -117,5 +120,16 @@ export default class MovieCardsPresenter {
   #addToFavorites = (coordinate) => {
     this.#scrollCoordinate = coordinate;
     this.#movieChange ({...this.#movie, userDetails: {...this.#movie.userDetails,favorite : !this.#movie.userDetails.favorite}});
+  };
+
+
+  #deleteComments = (id) => {
+    const comments = this.#popup.element.querySelectorAll ('.film-details__comment');
+    comments [id].remove ();
+  };
+
+
+  #getNewData = (movie) => {
+    this.#film = movie;
   };
 }

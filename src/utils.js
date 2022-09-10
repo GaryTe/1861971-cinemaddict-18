@@ -11,8 +11,8 @@ const getRandomInteger = (a = 0, b = 1) => {
 const humanizeYear = (year) => dayjs (year).year ();
 const humanizeHour = (hours) => dayjs (hours).format ('h');
 const humanizeMinute = (minute) => dayjs (minute).format ('mm');
-
 const humanizeDateMonthYear = (data) => dayjs (data).format ('DD MMMM YYYY');
+const humanizeDateMonthYearHourMinute = (data) => dayjs (data).format ('YYYY/MM/DD HH:mm');
 
 
 const updateItem = (items, update) => {
@@ -30,4 +30,4 @@ const updateItem = (items, update) => {
 };
 
 
-export {getRandomInteger, humanizeYear, humanizeHour, humanizeMinute, humanizeDateMonthYear, updateItem};
+export {getRandomInteger, humanizeYear, humanizeHour, humanizeMinute, humanizeDateMonthYear, updateItem, humanizeDateMonthYearHourMinute};

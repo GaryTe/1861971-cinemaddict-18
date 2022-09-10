@@ -41,24 +41,43 @@ const titles = [
   'The man with the Golden Arm'
 ];
 
+const commenter = [
+  'Алег',
+  'Илья',
+  'Киноман'
+];
+
+const emotions = [
+  'smile',
+  'sleeping',
+  'puke',
+  'angry'
+];
+
+const minds = [
+  'Фильм так себе.',
+  'Фильм супер.',
+  'На раз посмотреть пойдет.'
+];
+
 const generateImageAddress = () => {
   const index = getRandomInteger(0, descriptions.length - 1);
 
   return index;
 };
 
+const creationComments = () => ({
+  'id': ratings [getRandomInteger (0, ratings.length - 1)],
+  'author': commenter [getRandomInteger (0, commenter.length - 1)],
+  'comment': minds [getRandomInteger (0, minds.length - 1)],
+  'date': date [getRandomInteger (0, date.length - 1)],
+  'emotion': emotions [getRandomInteger (0, emotions.length - 1)]
+});
+
 const generateComment = () => {
   const comments = [];
-  const comment = {
-    'id': '42',
-    'author': 'Ilya O\'Reilly',
-    'comment': 'a film that changed my life, a true masterpiece, post-credit scene was just amazing omg.',
-    'date': '2019-05-11T16:12:32.554Z',
-    'emotion': 'smile'
-  };
-
   for (let i = 0; i <= getRandomInteger(0, 20); i++) {
-    comments.push (comment);
+    comments.push (creationComments ());
   }
   return comments;
 };

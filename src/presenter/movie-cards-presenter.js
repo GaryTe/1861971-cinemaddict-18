@@ -126,7 +126,16 @@ export default class MovieCardsPresenter {
   #deleteComments = (id) => {
     const comments = this.#popup.element.querySelectorAll ('.film-details__comment');
     comments [id].remove ();
+    const counter = comments.length;
+    this.#changesCommentCounter (counter);
+    this.#popup.setDeleteComments (this.#deleteComments);
   };
+
+
+  #changesCommentCounter (counterNumber) {
+    const counter = this.#popup.element.querySelector ('.film-details__comments-count');
+    counter.textContent = counterNumber - 1;
+  }
 
 
   #getNewData = (movie) => {

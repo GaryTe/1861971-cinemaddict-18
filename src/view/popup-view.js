@@ -121,7 +121,7 @@ const createPopup = (data) => {
     <section class="film-details__comments-wrap">
       <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${comments.length}</span></h3>
 
-      <ul class="film-details__comments-list">${getListComments ()}</ul>
+      <ul class="film-details__comments-list">${getListComments ().join ('')}</ul>
 
       <form class="film-details__new-comment" action="" method="get">
         <div class="film-details__add-emoji-label">${putEmotion ()}</div>
@@ -197,7 +197,9 @@ export default class PopupView extends AbstractStatefulView {
     this._callback.deleteComments = callback;
     const buttons = this.element.querySelectorAll ('.film-details__comment-delete');
     for (let i = 0; i < buttons.length; i++) {
-      buttons [i].addEventListener ('click', () => { this.#deleteComments (i);});
+      buttons [i].addEventListener ('click', () => {
+        this.#deleteComments (i);
+      });
     }
   }
 

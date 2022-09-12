@@ -122,9 +122,9 @@ export default class MasterPresenter {
   }
 
 
-  #movieChange = (updatedTask) => {
-    this.#movies = updateItem (this.#movies, updatedTask);
-    this.#collectionMovieCard.get (updatedTask.id).init (updatedTask);
+  #movieChange = (updatedMovie) => {
+    this.#movies = updateItem (this.#movies, updatedMovie);
+    this.#collectionMovieCard.get (updatedMovie.id).init (updatedMovie);
   };
 
 }

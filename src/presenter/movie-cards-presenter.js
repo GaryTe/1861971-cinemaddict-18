@@ -66,8 +66,8 @@ export default class MovieCardsPresenter {
     this.#popup.setAddToWatchlis (this.#addToWatchlis);
     this.#popup.setAlreadyWatched (this.#alreadyWatched);
     this.#popup.setAddToFavorites (this.#addToFavorites);
-    this.#popup.setDeleteComments (this.#deleteComments);
-    this.#popup.setReturnNewData (this.#getNewData);
+    this.#popup.setDeleteComment (this.#deleteComment);
+    this.#popup.setReturnNewMovie (this.#getNewMovie);
   };
 
 
@@ -123,12 +123,12 @@ export default class MovieCardsPresenter {
   };
 
 
-  #deleteComments = (id) => {
+  #deleteComment = (id) => {
     const comments = this.#popup.element.querySelectorAll ('.film-details__comment');
     comments [id].remove ();
     const counter = comments.length;
     this.#changesCommentCounter (counter);
-    this.#popup.setDeleteComments (this.#deleteComments);
+    this.#popup.setDeleteComment (this.#deleteComment);
   };
 
 
@@ -138,7 +138,7 @@ export default class MovieCardsPresenter {
   }
 
 
-  #getNewData = (movie) => {
+  #getNewMovie = (movie) => {
     this.#film = movie;
   };
 }

@@ -164,7 +164,7 @@ export default class PopupView extends AbstractStatefulView {
   constructor (data) {
     super ();
     this._state = PopupView.popupToState (data);
-    this.#addHandlersToInteractiveElements ();
+    this.#addHandlersToInputFieldsAndEmoji ();
     this.#scroll ();
   }
 
@@ -175,14 +175,14 @@ export default class PopupView extends AbstractStatefulView {
 
 
   _restoreHandlers = () => {
-    this.#addHandlersToInteractiveElements ();
+    this.#addHandlersToInputFieldsAndEmoji ();
     this.#scroll ();
     this.setClickHandler (this._callback.click);
     this.setAddToWatchlis (this._callback.addToWatchlis);
     this.setAlreadyWatched (this._callback.alreadyWatched);
     this.setAddToFavorites (this._callback.addToFavorites);
-    this.setDeleteComments (this._callback.deleteComments);
-    this.setReturnNewData (this._callback.returnNewData);
+    this.setDeleteComment (this._callback.deleteComment);
+    this.setReturnNewMovie (this._callback.returnNewMovie);
   };
 
 
@@ -193,19 +193,19 @@ export default class PopupView extends AbstractStatefulView {
   };
 
 
-  setDeleteComments (callback) {
-    this._callback.deleteComments = callback;
+  setDeleteComment (callback) {
+    this._callback.deleteComment = callback;
     const buttons = this.element.querySelectorAll ('.film-details__comment-delete');
     for (let i = 0; i < buttons.length; i++) {
       buttons [i].addEventListener ('click', () => {
-        this.#deleteComments (i);
+        this.#deleteComment (i);
       });
     }
   }
 
 
-  #deleteComments = (id) => {
-    this._callback.deleteComments (id);
+  #deleteComment = (id) => {
+    this._callback.deleteComment (id);
   };
 
 
@@ -253,7 +253,7 @@ export default class PopupView extends AbstractStatefulView {
   };
 
 
-  #addHandlersToInteractiveElements () {
+  #addHandlersToInputFieldsAndEmoji () {
     const emotions = this.element.querySelectorAll ('.film-details__emoji-item');
     for (const emotion of emotions) {
       emotion.addEventListener ('change', this.#choiceOfEmotion);
@@ -279,8 +279,8 @@ export default class PopupView extends AbstractStatefulView {
   };
 
 
-  setReturnNewData (callback) {
-    this._callback.returnNewData = callback;
+  setReturnNewMovie (callback) {
+    this._callback.returnNewMovie = callback;
     this.element.querySelector('.film-details__new-comment').addEventListener('keydown', (evt) => {
       if (evt.key === 'Control') {return;}
       if (evt.ctrlKey && evt.key === 'Enter') {
@@ -291,7 +291,7 @@ export default class PopupView extends AbstractStatefulView {
 
 
   #parseStateToData = () => {
-    this._callback.returnNewData (PopupView.parseStateToData (this._state));
+    this._callback.returnNewMovie (PopupView.parseStateToData (this._state));
   };
 
 

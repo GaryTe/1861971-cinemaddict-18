@@ -15,19 +15,36 @@ const humanizeDateMonthYear = (data) => dayjs (data).format ('DD MMMM YYYY');
 const humanizeDateMonthYearHourMinute = (data) => dayjs (data).format ('YYYY/MM/DD HH:mm');
 
 
-const updateItem = (items, update) => {
-  const index = items.findIndex((item) => item.id === update.id);
-
-  if (index === -1) {
-    return items;
-  }
-
-  return [
-    ...items.slice(0, index),
-    update,
-    ...items.slice(index + 1),
-  ];
+const sortByDate = (movies) => {
+  const sortMovies = byDate (movies);
+  return sortMovies.reverse ();
 };
 
+function byDate (movies) {
+  const sortMovies = movies.slice ();
+  sortMovies.sort ((a,b) => {
+    if (humanizeYear (a.filmInfo.release.date) < humanizeYear (b.filmInfo.release.date)) {
+      return -1;
+    }
+  });
+  return sortMovies;
+}
 
-export {getRandomInteger, humanizeYear, humanizeHour, humanizeMinute, humanizeDateMonthYear, updateItem, humanizeDateMonthYearHourMinute};
+const sortByRating = (movies) => {
+  const sortMovies = byRating (movies);
+  return sortMovies.reverse ();
+};
+
+function byRating (movies) {
+  const sortMovies = movies.slice ();
+  sortMovies.sort ((a,b) => {
+    if (a.filmInfo.totalRating < b.filmInfo.totalRating) {
+      return -1;
+    }
+  });
+  return sortMovies;
+}
+
+
+export {getRandomInteger, humanizeYear, humanizeHour, humanizeMinute, humanizeDateMonthYear,
+  humanizeDateMonthYearHourMinute, sortByDate, sortByRating};

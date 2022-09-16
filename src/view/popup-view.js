@@ -205,7 +205,7 @@ export default class PopupView extends AbstractStatefulView {
 
 
   #deleteComment = (id) => {
-    this._callback.deleteComment (id);
+    this._callback.deleteComment (id, this.#scrollCoordinate);
   };
 
 

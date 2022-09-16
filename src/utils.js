@@ -46,5 +46,20 @@ function byRating (movies) {
 }
 
 
+function sortDataByKey (filterNames, movies) {
+  const sortMovies = [];
+  if (filterNames === 'all') {
+    return movies;
+  }
+  for (const movie of movies) {
+    const {userDetails} = movie;
+    if (userDetails[filterNames] === true) {
+      sortMovies.push (movie);
+    }
+  }
+  return sortMovies;
+}
+
+
 export {getRandomInteger, humanizeYear, humanizeHour, humanizeMinute, humanizeDateMonthYear,
-  humanizeDateMonthYearHourMinute, sortByDate, sortByRating};
+  humanizeDateMonthYearHourMinute, sortByDate, sortByRating, sortDataByKey};

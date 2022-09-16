@@ -1,18 +1,16 @@
-import {movies} from '../data';
+import Observable from '../framework/observable.js';
+import {FilterType} from '../const.js';
 
-export default class FilterModel {
-  #movies = movies;
-  sortMovies = [];
+export default class FilterModel extends Observable {
+  #filter = FilterType.ALL;
 
-
-  setSortDataByKey (filterNames) {
-    this.sortMovies = [];
-    for (const movie of this.#movies) {
-      const {userDetails} = movie;
-      if (userDetails[filterNames] === true) {
-        this.sortMovies.push (movie);
-      }
-    }
-    return this.sortMovies;
+  get filter() {
+    return this.#filter;
   }
+
+  setFilter = (updateType, filter) => {
+    this.#filter = filter;
+    this._notify(updateType, filter);
+  };
+
 }

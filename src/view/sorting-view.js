@@ -6,17 +6,23 @@ const SORT_NAME = [
   'Sort by rating'
 ];
 
-const createSorting = () => `<ul class="sort">
-<li><a href="#" class="sort__button sort__button--active">Sort by default</a></li>
-<li><a href="#" class="sort__button">Sort by date</a></li>
-<li><a href="#" class="sort__button">Sort by rating</a></li>
+const createSorting = (currentSortType) => `<ul class="sort">
+<li><a href="#" class="sort__button ${currentSortType === 'Sort by default' ? 'sort__button--active' : ''}">Sort by default</a></li>
+<li><a href="#" class="sort__button ${currentSortType === 'Sort by date' ? 'sort__button--active' : ''}">Sort by date</a></li>
+<li><a href="#" class="sort__button ${currentSortType === 'Sort by rating' ? 'sort__button--active' : ''}">Sort by rating</a></li>
 </ul>`;
 
 export default class SortingView extends AbstractView {
   #sortButtons = null;
+  #currentSortType = '';
+
+  constructor (currentSortType) {
+    super ();
+    this.#currentSortType = currentSortType;
+  }
 
   get template() {
-    return createSorting();
+    return createSorting (this.#currentSortType);
   }
 
 

@@ -16,4 +16,12 @@ const SortType = {
   SORT_BY_RETING: 'Sort by rating',
 };
 
-export {UpdateType, UserAction, SortType};
+
+const FilterType = {
+  ALL: 'all',
+  WATCHLIST: 'watchlist',
+  ALREADY_WATCHED: 'alreadyWatched',
+  FAVORITE: 'favorite'
+};
+
+export {UpdateType, UserAction, SortType, FilterType};

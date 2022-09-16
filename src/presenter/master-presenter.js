@@ -3,8 +3,8 @@ import MessageView from '../view/message-view.js';
 import MovieCardPresenter from './movie-cards-presenter.js';
 import SortingView from '../view/sorting-view.js';
 import {RenderPosition, render, remove} from '../framework/render.js';
-import {UserAction, UpdateType, SortType} from '../const.js';
-import { sortByDate, sortByRating } from '../utils.js';
+import {UserAction, UpdateType, SortType, FilterType} from '../const.js';
+import { sortByDate, sortByRating, sortDataByKey } from '../utils.js';
 
 const COUNTER = 5;
 
@@ -14,36 +14,43 @@ export default class MasterPresenter {
   #footerElement = null;
   #moviesModel = null;
   #containerView = null;
-  #navigationMenuView = null;
   #buttonView = null;
+  #filterModel = null;
+  #sortingView = null;
+  #messageView = null;
 
-  #messageView = new MessageView;
-  #sortingView = new SortingView;
 
+  #filterType = FilterType.ALL;
   #counterNumber = COUNTER;
   #collectionMovieCard = new Map ();
   #currentSortType = SortType.SORT_BY_DEFAULT;
 
 
-  constructor (container, footerElement, moviesModel, bodyElement, containerView, navigationMenuView) {
+  constructor (container, footerElement, moviesModel, bodyElement, containerView, filterModel) {
     this.#bodyElement = bodyElement;
     this.#container = container;
     this.#footerElement = footerElement;
     this.#moviesModel = moviesModel;
     this.#containerView = containerView;
-    this.#navigationMenuView = navigationMenuView;
-    this.#moviesModel.addObserver(this.#handleModelEvent);
+    this.#filterModel = filterModel;
+
+    this.#moviesModel.addObserver (this.#handleModelEvent);
+    this.#filterModel.addObserver (this.#handleModelEvent);
   }
 
 
   get movies () {
+    this.#filterType = this.#filterModel.filter;
+    const tasks = this.#moviesModel.movies;
+    const filteredMovies = sortDataByKey (this.#filterType, tasks);
+
     switch (this.#currentSortType) {
       case SortType.SORT_BY_DATE:
-        return sortByDate([...this.#moviesModel.movies]);
+        return sortByDate(filteredMovies);
       case SortType.SORT_BY_RETING:
-        return sortByRating([...this.#moviesModel.movies]);
+        return sortByRating(filteredMovies);
     }
-    return this.#moviesModel.movies;
+    return filteredMovies;
 
   }
 
@@ -85,6 +92,7 @@ export default class MasterPresenter {
 
 
   #renderMessageView = () => {
+    this.#messageView = new MessageView (this.#filterType);
     render(this.#messageView, this.#containerView.element, RenderPosition.AFTERBEGIN);
   };
 
@@ -106,8 +114,9 @@ export default class MasterPresenter {
 
 
   #renderSortingView = () => {
+    this.#sortingView = new SortingView (this.#currentSortType);
     this.#sortingView.setClickHandler(this.#handleSortTypeChange);
-    render(this.#sortingView, this.#navigationMenuView.element, RenderPosition.AFTEREND);
+    render(this.#sortingView, this.#containerView.element, RenderPosition.BEFOREBEGIN);
   };
 
 
@@ -190,6 +199,7 @@ export default class MasterPresenter {
     this.#collectionMovieCard.forEach ((movieCard) => movieCard.destroy());
     this.#collectionMovieCard.clear();
 
+    this.#removeSortingView ();
     this.#removeMessageView ();
     this.#removeButton ();
 

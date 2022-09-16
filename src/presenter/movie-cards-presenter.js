@@ -136,19 +136,14 @@ export default class MovieCardsPresenter {
   };
 
 
-  #deleteComment = (id) => {
-    const comments = this.#popup.element.querySelectorAll ('.film-details__comment');
-    comments [id].remove ();
-    const counter = comments.length;
-    this.#changesCommentCounter (counter);
-    this.#popup.setDeleteComment (this.#deleteComment);
+  #deleteComment = (id,coordinate) => {
+    this.#scrollCoordinate = coordinate;
+    this.#movieChange (
+      UserAction.UPDATE_TASK,
+      UpdateType.PATCH,
+      {...this.#movie, comments: [...this.#movie.comments.filter ((comment) => comment !== this.#movie.comments[id])]}
+    );
   };
-
-
-  #changesCommentCounter (counterNumber) {
-    const counter = this.#popup.element.querySelector ('.film-details__comments-count');
-    counter.textContent = counterNumber - 1;
-  }
 
 
   #getNewMovie = (movie) => {

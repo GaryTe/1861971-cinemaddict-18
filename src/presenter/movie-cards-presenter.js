@@ -1,7 +1,7 @@
 import MovieCardView from '../view/movie-card-view.js';
 import PopupView from '../view/popup-view.js';
 import {RenderPosition, render, remove, replace} from '../framework/render.js';
-import {UserAction, UpdateType} from '../const.js';
+import {UserAction, UpdateType, FilterType} from '../const.js';
 
 export default class MovieCardsPresenter {
   #movieCard = null;
@@ -11,15 +11,22 @@ export default class MovieCardsPresenter {
   #bodyElement = null;
   #movieChange = null;
   #movie = null;
-  #scrollCoordinate = 0;
   #film = null;
+  #key = null;
 
+  #scrollCoordinate = 0;
+  #userAction = UserAction.UPDATE_TASK;
+  #updateType = UpdateType.MAJOR;
 
-  constructor (container, footerElement, bodyElement, movieChange) {
+  constructor (container, footerElement, bodyElement, movieChange, key) {
     this.#container = container;
     this.#footerElement = footerElement;
     this.#bodyElement = bodyElement;
     this.#movieChange = movieChange;
+    this.#key = key;
+    this.#userAction = key.userAction;
+    this.#updateType = key.updateType;
+
   }
 
 
@@ -31,10 +38,25 @@ export default class MovieCardsPresenter {
 
     this.#movieCard = new MovieCardView (movie);
 
+
+    switch (this.#key.key) {
+      case FilterType.WATCHLIST:
+        this.#movieCard.setAddToWatchlis (this.#addToWatchlis);
+        break;
+      case FilterType.FAVORITE:
+        this.#movieCard.setAddToFavorites (this.#addToFavorites);
+        break;
+      case FilterType.ALREADY_WATCHED:
+        this.#movieCard.setAlreadyWatched (this.#alreadyWatched);
+        break;
+      default:
+        this.#movieCard.setAddToWatchlis (this.#addToWatchlis);
+        this.#movieCard.setAddToFavorites (this.#addToFavorites);
+        this.#movieCard.setAlreadyWatched (this.#alreadyWatched);
+        break;
+    }
     this.#movieCard.setClickHandler (this.#renderPopup);
-    this.#movieCard.setAddToWatchlis (this.#addToWatchlis);
-    this.#movieCard.setAlreadyWatched (this.#alreadyWatched);
-    this.#movieCard.setAddToFavorites (this.#addToFavorites);
+
 
     if (prevMovieCard === null) {
       render(this.#movieCard, this.#container);
@@ -65,8 +87,8 @@ export default class MovieCardsPresenter {
   #addHandlersToPopup = () => {
     this.#popup.setClickHandler (this.#closPopup);
     this.#popup.setAddToWatchlis (this.#addToWatchlis);
-    this.#popup.setAlreadyWatched (this.#alreadyWatched);
     this.#popup.setAddToFavorites (this.#addToFavorites);
+    this.#popup.setAlreadyWatched (this.#alreadyWatched);
     this.#popup.setDeleteComment (this.#deleteComment);
     this.#popup.setReturnNewMovie (this.#getNewMovie);
   };
@@ -109,8 +131,8 @@ export default class MovieCardsPresenter {
   #addToWatchlis = (coordinate) => {
     this.#scrollCoordinate = coordinate;
     this.#movieChange (
-      UserAction.UPDATE_TASK,
-      UpdateType.PATCH,
+      this.#userAction,
+      this.#updateType,
       {...this.#movie, userDetails: {...this.#movie.userDetails,watchlist : !this.#movie.userDetails.watchlist}}
     );
   };
@@ -119,8 +141,8 @@ export default class MovieCardsPresenter {
   #alreadyWatched = (coordinate) => {
     this.#scrollCoordinate = coordinate;
     this.#movieChange (
-      UserAction.UPDATE_TASK,
-      UpdateType.PATCH,
+      this.#userAction,
+      this.#updateType,
       {...this.#movie, userDetails: {...this.#movie.userDetails,alreadyWatched : !this.#movie.userDetails.alreadyWatched}}
     );
   };
@@ -129,8 +151,8 @@ export default class MovieCardsPresenter {
   #addToFavorites = (coordinate) => {
     this.#scrollCoordinate = coordinate;
     this.#movieChange (
-      UserAction.UPDATE_TASK,
-      UpdateType.PATCH,
+      this.#userAction,
+      this.#updateType,
       {...this.#movie, userDetails: {...this.#movie.userDetails,favorite : !this.#movie.userDetails.favorite}}
     );
   };

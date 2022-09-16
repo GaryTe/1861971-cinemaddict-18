@@ -4,7 +4,7 @@ import MovieCardPresenter from './movie-cards-presenter.js';
 import SortingView from '../view/sorting-view.js';
 import {RenderPosition, render, remove} from '../framework/render.js';
 import {UserAction, UpdateType, SortType, FilterType} from '../const.js';
-import { sortByDate, sortByRating, sortDataByKey } from '../utils.js';
+import {sortByDate, sortByRating, sortDataByKey, gettingValues} from '../utils.js';
 
 const COUNTER = 5;
 
@@ -18,6 +18,7 @@ export default class MasterPresenter {
   #filterModel = null;
   #sortingView = null;
   #messageView = null;
+  #key = null;
 
 
   #filterType = FilterType.ALL;
@@ -63,6 +64,7 @@ export default class MasterPresenter {
   #checkFilmContainer = () => {
     const movies = this.movies;
     const movieCount = movies.length;
+    this.#key = gettingValues (this.#filterModel.filter);
 
     if (movieCount === 0) {
       this.#removeSortingView ();
@@ -152,7 +154,8 @@ export default class MasterPresenter {
 
 
   #renderMovieCardAndPopup = (data) => {
-    const movieCardPresenter = new MovieCardPresenter (this.#container, this.#footerElement, this.#bodyElement, this.#handleViewAction);
+    const movieCardPresenter = new MovieCardPresenter (this.#container, this.#footerElement, this.#bodyElement, this.#handleViewAction,
+      this.#key);
     movieCardPresenter.init (data);
     this.#collectionMovieCard.set (data.id, movieCardPresenter);
   };

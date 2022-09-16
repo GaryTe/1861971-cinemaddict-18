@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import {UpdateType, UserAction} from './const';
 
 const getRandomInteger = (a = 0, b = 1) => {
   const lower = Math.ceil(Math.min(a, b));
@@ -61,5 +62,19 @@ function sortDataByKey (filterNames, movies) {
 }
 
 
+function gettingValues (keyValue) {
+  const value = {
+    userAction: UserAction.UPDATE_TASK,
+    updateType: UpdateType.PATCH,
+    key: keyValue
+  };
+  if (keyValue !== 'all') {
+    value.userAction = UserAction.DELETE_TASK;
+    value.updateType = UpdateType.MINOR;
+  }
+  return value;
+}
+
+
 export {getRandomInteger, humanizeYear, humanizeHour, humanizeMinute, humanizeDateMonthYear,
-  humanizeDateMonthYearHourMinute, sortByDate, sortByRating, sortDataByKey};
+  humanizeDateMonthYearHourMinute, sortByDate, sortByRating, sortDataByKey, gettingValues};

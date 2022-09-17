@@ -41,8 +41,8 @@ export default class MasterPresenter {
 
   get movies () {
     this.#filterType = this.#filterModel.filter;
-    const tasks = this.#moviesModel.movies;
-    const filteredMovies = sortDataByKey (this.#filterType, tasks);
+    const movies = this.#moviesModel.movies;
+    const filteredMovies = sortDataByKey (this.#filterType, movies);
 
     switch (this.#currentSortType) {
       case SortType.SORT_BY_DATE:
@@ -73,10 +73,6 @@ export default class MasterPresenter {
     this.#removeMessageView ();
     this.#renderSortingView ();
 
-    // Теперь, когда #renderBoard рендерит доску не только на старте,
-    // но и по ходу работы приложения, нужно заменить
-    // константу TASK_COUNT_PER_STEP на свойство #renderedTaskCount,
-    // чтобы в случае перерисовки сохранить N-показанных карточек
     this.#renderMoreCards(movies.slice(0, Math.min(movieCount, this.#counterNumber)));
 
     if (movieCount > COUNTER) {
@@ -108,7 +104,7 @@ export default class MasterPresenter {
     }
 
     this.#currentSortType = sortType;
-    this.#clearBoard({resetRenderedTaskCount: true});
+    this.#clearBoard({resetRenderedMovieCount: true});
     this.#checkFilmContainer ();
   };
 
@@ -135,9 +131,9 @@ export default class MasterPresenter {
   #renderAdditionalMovieCards = () => {
     const moviesCount = this.movies.length;
     const newRenderMovies = Math.min(moviesCount, this.#counterNumber + COUNTER);
-    const tasks = this.movies.slice(this.#counterNumber, newRenderMovies);
+    const movies = this.movies.slice(this.#counterNumber, newRenderMovies);
 
-    this.#renderMoreCards(tasks);
+    this.#renderMoreCards(movies);
     this.#counterNumber = newRenderMovies;
 
     if (this.#counterNumber >= this.movies.length) {
@@ -183,13 +179,10 @@ export default class MasterPresenter {
   #handleViewAction = (actionType, updateType, update) => {
     switch (actionType) {
       case UserAction.UPDATE_TASK:
-        this.#moviesModel.updateTask(updateType, update);
-        break;
-      case UserAction.ADD_TASK:
-        this.#moviesModel.addTask(updateType, update);
+        this.#moviesModel.updatedMovie(updateType, update);
         break;
       case UserAction.DELETE_TASK:
-        this.#moviesModel.deleteTask(updateType, update);
+        this.#moviesModel.deleteMovie(updateType, update);
         break;
     }
   };
@@ -198,24 +191,21 @@ export default class MasterPresenter {
   #handleModelEvent = (updateType, updatedMovie) => {
     switch (updateType) {
       case UpdateType.PATCH:
-        // - обновить часть списка (например, когда поменялось описание)
         this.#collectionMovieCard.get (updatedMovie.id).init (updatedMovie);
         break;
       case UpdateType.MINOR:
-        // - обновить список (например, когда задача ушла в архив)
         this.#clearBoard ();
         this.#checkFilmContainer ();
         break;
       case UpdateType.MAJOR:
-        // - обновить всю доску (например, при переключении фильтра)
-        this.#clearBoard ({resetRenderedTaskCount: true, resetSortType: true});
+        this.#clearBoard ({resetRenderedMovieCount: true, resetSortType: true});
         this.#checkFilmContainer ();
         break;
     }
   };
 
 
-  #clearBoard = ({resetRenderedTaskCount = false, resetSortType = false} = {}) => {
+  #clearBoard = ({resetRenderedMovieCount = false, resetSortType = false} = {}) => {
     const movieCount = this.movies.length;
 
     this.#collectionMovieCard.forEach ((movieCard) => movieCard.destroy());
@@ -225,12 +215,9 @@ export default class MasterPresenter {
     this.#removeMessageView ();
     this.#removeButton ();
 
-    if (resetRenderedTaskCount) {
+    if (resetRenderedMovieCount) {
       this.#counterNumber = COUNTER;
     } else {
-      // На случай, если перерисовка доски вызвана
-      // уменьшением количества задач (например, удаление или перенос в архив)
-      // нужно скорректировать число показанных задач
       this.#counterNumber = Math.min(movieCount, this.#counterNumber);
     }
 

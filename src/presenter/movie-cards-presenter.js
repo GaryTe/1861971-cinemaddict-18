@@ -1,7 +1,7 @@
 import MovieCardView from '../view/movie-card-view.js';
 import PopupView from '../view/popup-view.js';
 import {RenderPosition, render, remove, replace} from '../framework/render.js';
-import {UserAction, UpdateType} from '../const.js';
+import {UserAction, UpdateType, FilterType} from '../const.js';
 
 export default class MovieCardsPresenter {
   #movieCard = null;
@@ -118,7 +118,7 @@ export default class MovieCardsPresenter {
       this.#userAction,
       this.#updateType,
       {...this.#movie, userDetails: {...this.#movie.userDetails,watchlist : !this.#movie.userDetails.watchlist}},
-      'watchlist'
+      FilterType.WATCHLIST
     );
   };
 
@@ -129,7 +129,7 @@ export default class MovieCardsPresenter {
       this.#userAction,
       this.#updateType,
       {...this.#movie, userDetails: {...this.#movie.userDetails,alreadyWatched : !this.#movie.userDetails.alreadyWatched}},
-      'alreadyWatched'
+      FilterType.ALREADY_WATCHED
     );
   };
 
@@ -140,7 +140,7 @@ export default class MovieCardsPresenter {
       this.#userAction,
       this.#updateType,
       {...this.#movie, userDetails: {...this.#movie.userDetails,favorite : !this.#movie.userDetails.favorite}},
-      'favorite'
+      FilterType.FAVORITE
     );
   };
 

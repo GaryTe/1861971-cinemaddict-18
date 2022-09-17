@@ -14,7 +14,7 @@ export default class MoviesModel extends Observable{
   }
 
 
-  updateTask = (updateType, update) => {
+  updatedMovie = (updateType, update) => {
     const index = this.#movies.findIndex((movie) => movie.id === update.id);
 
     if (index === -1) {
@@ -31,17 +31,7 @@ export default class MoviesModel extends Observable{
   };
 
 
-  addTask = (updateType, update) => {
-    this.#movies = [
-      update,
-      ...this.#movies,
-    ];
-
-    this._notify(updateType, update);
-  };
-
-
-  deleteTask = (updateType, update) => {
+  deleteMovie = (updateType, update) => {
     const index = this.#movies.findIndex((movie) => movie.id === update.id);
 
     if (index === -1) {

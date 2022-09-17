@@ -66,7 +66,6 @@ function gettingValues (keyValue) {
   const value = {
     userAction: UserAction.UPDATE_TASK,
     updateType: UpdateType.PATCH,
-    key: keyValue
   };
   if (keyValue !== 'all') {
     value.userAction = UserAction.DELETE_TASK;

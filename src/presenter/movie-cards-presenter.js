@@ -1,7 +1,7 @@
 import MovieCardView from '../view/movie-card-view.js';
 import PopupView from '../view/popup-view.js';
 import {RenderPosition, render, remove, replace} from '../framework/render.js';
-import {UserAction, UpdateType, FilterType} from '../const.js';
+import {UserAction, UpdateType} from '../const.js';
 
 export default class MovieCardsPresenter {
   #movieCard = null;
@@ -12,20 +12,18 @@ export default class MovieCardsPresenter {
   #movieChange = null;
   #movie = null;
   #film = null;
-  #key = null;
 
   #scrollCoordinate = 0;
   #userAction = UserAction.UPDATE_TASK;
   #updateType = UpdateType.MAJOR;
 
-  constructor (container, footerElement, bodyElement, movieChange, key) {
+  constructor (container, footerElement, bodyElement, movieChange, filter) {
     this.#container = container;
     this.#footerElement = footerElement;
     this.#bodyElement = bodyElement;
     this.#movieChange = movieChange;
-    this.#key = key;
-    this.#userAction = key.userAction;
-    this.#updateType = key.updateType;
+    this.#userAction = filter.userAction;
+    this.#updateType = filter.updateType;
 
   }
 
@@ -38,23 +36,9 @@ export default class MovieCardsPresenter {
 
     this.#movieCard = new MovieCardView (movie);
 
-
-    switch (this.#key.key) {
-      case FilterType.WATCHLIST:
-        this.#movieCard.setAddToWatchlis (this.#addToWatchlis);
-        break;
-      case FilterType.FAVORITE:
-        this.#movieCard.setAddToFavorites (this.#addToFavorites);
-        break;
-      case FilterType.ALREADY_WATCHED:
-        this.#movieCard.setAlreadyWatched (this.#alreadyWatched);
-        break;
-      default:
-        this.#movieCard.setAddToWatchlis (this.#addToWatchlis);
-        this.#movieCard.setAddToFavorites (this.#addToFavorites);
-        this.#movieCard.setAlreadyWatched (this.#alreadyWatched);
-        break;
-    }
+    this.#movieCard.setAddToWatchlis (this.#addToWatchlis);
+    this.#movieCard.setAddToFavorites (this.#addToFavorites);
+    this.#movieCard.setAlreadyWatched (this.#alreadyWatched);
     this.#movieCard.setClickHandler (this.#renderPopup);
 
 
@@ -133,7 +117,8 @@ export default class MovieCardsPresenter {
     this.#movieChange (
       this.#userAction,
       this.#updateType,
-      {...this.#movie, userDetails: {...this.#movie.userDetails,watchlist : !this.#movie.userDetails.watchlist}}
+      {...this.#movie, userDetails: {...this.#movie.userDetails,watchlist : !this.#movie.userDetails.watchlist}},
+      'watchlist'
     );
   };
 
@@ -143,7 +128,8 @@ export default class MovieCardsPresenter {
     this.#movieChange (
       this.#userAction,
       this.#updateType,
-      {...this.#movie, userDetails: {...this.#movie.userDetails,alreadyWatched : !this.#movie.userDetails.alreadyWatched}}
+      {...this.#movie, userDetails: {...this.#movie.userDetails,alreadyWatched : !this.#movie.userDetails.alreadyWatched}},
+      'alreadyWatched'
     );
   };
 
@@ -153,7 +139,8 @@ export default class MovieCardsPresenter {
     this.#movieChange (
       this.#userAction,
       this.#updateType,
-      {...this.#movie, userDetails: {...this.#movie.userDetails,favorite : !this.#movie.userDetails.favorite}}
+      {...this.#movie, userDetails: {...this.#movie.userDetails,favorite : !this.#movie.userDetails.favorite}},
+      'favorite'
     );
   };
 

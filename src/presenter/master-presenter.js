@@ -18,7 +18,6 @@ export default class MasterPresenter {
   #filterModel = null;
   #sortingView = null;
   #messageView = null;
-  #key = null;
 
 
   #filterType = FilterType.ALL;
@@ -64,7 +63,6 @@ export default class MasterPresenter {
   #checkFilmContainer = () => {
     const movies = this.movies;
     const movieCount = movies.length;
-    this.#key = gettingValues (this.#filterModel.filter);
 
     if (movieCount === 0) {
       this.#removeSortingView ();
@@ -154,10 +152,23 @@ export default class MasterPresenter {
 
 
   #renderMovieCardAndPopup = (data) => {
-    const movieCardPresenter = new MovieCardPresenter (this.#container, this.#footerElement, this.#bodyElement, this.#handleViewAction,
-      this.#key);
+    const movieCardPresenter = new MovieCardPresenter (this.#container, this.#footerElement, this.#bodyElement, this.#checkBeforeUpgrade,
+      gettingValues (this.#filterModel.filter));
     movieCardPresenter.init (data);
     this.#collectionMovieCard.set (data.id, movieCardPresenter);
+  };
+
+
+  #checkBeforeUpgrade = (actionType, updateType, update, filter) => {
+    if (this.#filterModel.filter === filter || this.#filterModel.filter === 'all') {
+      this.#handleViewAction (actionType, updateType, update);
+    } else {
+      this.#handleViewAction (
+        actionType = UserAction.UPDATE_TASK,
+        updateType = UpdateType.PATCH,
+        update
+      );
+    }
   };
 
 

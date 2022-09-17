@@ -159,9 +159,17 @@ export default class MasterPresenter {
   };
 
 
+  #addMovieBeforeDelet = (actionType, update) => {
+    if (actionType === 'DELETE_TASK') {
+      this.#moviesModel.movies = update;
+    }
+  };
+
+
   #checkBeforeUpgrade = (actionType, updateType, update, filter) => {
     if (this.#filterModel.filter === filter || this.#filterModel.filter === 'all') {
       this.#handleViewAction (actionType, updateType, update);
+      this.#addMovieBeforeDelet (actionType, update);
     } else {
       this.#handleViewAction (
         actionType = UserAction.UPDATE_TASK,

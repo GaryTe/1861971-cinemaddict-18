@@ -6,6 +6,13 @@ export default class MoviesModel extends Observable{
 
   get movies () {return this.#movies;}
 
+  set movies (update) {
+    this.#movies = [
+      update,
+      ...this.#movies,
+    ];
+  }
+
 
   updateTask = (updateType, update) => {
     const index = this.#movies.findIndex((movie) => movie.id === update.id);

@@ -109,6 +109,7 @@ export default class MovieCardsPresenter {
 
   destroy () {
     remove(this.#movieCard);
+    remove (this.#popup);
   }
 
 

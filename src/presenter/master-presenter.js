@@ -2,6 +2,7 @@ import ButtonView from '../view/button-view.js';
 import MessageView from '../view/message-view.js';
 import MovieCardPresenter from './movie-cards-presenter.js';
 import SortingView from '../view/sorting-view.js';
+import PopupPresenter from './popup-presenter.js';
 import {RenderPosition, render, remove} from '../framework/render.js';
 import {UserAction, UpdateType, SortType, FilterType} from '../const.js';
 import {sortByDate, sortByRating, sortDataByKey, gettingValues} from '../utils.js';
@@ -18,6 +19,7 @@ export default class MasterPresenter {
   #filterModel = null;
   #sortingView = null;
   #messageView = null;
+  #popup = null;
 
 
   #filterType = FilterType.ALL;
@@ -148,8 +150,8 @@ export default class MasterPresenter {
 
 
   #renderMovieCardAndPopup = (data) => {
-    const movieCardPresenter = new MovieCardPresenter (this.#container, this.#footerElement, this.#bodyElement, this.#checkBeforeUpgrade,
-      gettingValues (this.#filterModel.filter));
+    const movieCardPresenter = new MovieCardPresenter (this.#container, this.#checkBeforeUpgrade,
+      gettingValues (this.#filterModel.filter), this.#renderPopup);
     movieCardPresenter.init (data);
     this.#collectionMovieCard.set (data.id, movieCardPresenter);
   };
@@ -166,13 +168,21 @@ export default class MasterPresenter {
     if (this.#filterModel.filter === filter || this.#filterModel.filter === 'all') {
       this.#handleViewAction (actionType, updateType, update);
       this.#addMovieBeforeDelet (actionType, update);
-    } else {
+      return;
+    }
+    if (this.#collectionMovieCard.get (update.id) === undefined) {
       this.#handleViewAction (
-        actionType = UserAction.UPDATE_TASK,
-        updateType = UpdateType.PATCH,
+        actionType = UserAction.ADD_TASK,
+        updateType = UpdateType.MINOR,
         update
       );
+      return;
     }
+    this.#handleViewAction (
+      actionType = UserAction.UPDATE_TASK,
+      updateType = UpdateType.PATCH,
+      update
+    );
   };
 
 
@@ -180,6 +190,9 @@ export default class MasterPresenter {
     switch (actionType) {
       case UserAction.UPDATE_TASK:
         this.#moviesModel.updatedMovie(updateType, update);
+        break;
+      case UserAction.ADD_TASK:
+        this.#moviesModel.addMovie(updateType, update);
         break;
       case UserAction.DELETE_TASK:
         this.#moviesModel.deleteMovie(updateType, update);
@@ -192,10 +205,17 @@ export default class MasterPresenter {
     switch (updateType) {
       case UpdateType.PATCH:
         this.#collectionMovieCard.get (updatedMovie.id).init (updatedMovie);
+        this.#popup.init (updatedMovie);
         break;
       case UpdateType.MINOR:
         this.#clearBoard ();
         this.#checkFilmContainer ();
+        if (this.#popup !== null) {
+          this.#popup.init (updatedMovie);
+        }
+        if (this.#collectionMovieCard.get (updatedMovie.id) !== undefined) {
+          this.#collectionMovieCard.get (updatedMovie.id).init (updatedMovie);
+        }
         break;
       case UpdateType.MAJOR:
         this.#clearBoard ({resetRenderedMovieCount: true, resetSortType: true});
@@ -225,4 +245,38 @@ export default class MasterPresenter {
       this.#currentSortType = SortType.SORT_BY_DEFAULT;
     }
   };
+
+
+  #renderPopup = (movie) => {
+    document.addEventListener('keydown',this.#closePopupKey);
+    this.#checkOpenPopups ();
+    this.#popup = new PopupPresenter (this.#footerElement, this.#closPopup, this.#checkBeforeUpgrade, this.#bodyElement,
+      gettingValues (this.#filterModel.filter));
+    this.#popup.init (movie);
+    this.#bodyElement.classList.add ('hide-overflow');
+  };
+
+
+  #checkOpenPopups () {
+    if (this.#popup !== null) {
+      remove (this.#popup.prevPopup);
+    }
+  }
+
+
+  #closePopupKey = (evt) => {
+    if(evt.key === 'Esc' || evt.key === 'Escape') {
+      this.#closPopup();
+      document.removeEventListener('keydown', this.#closePopupKey);
+    }
+  };
+
+
+  #closPopup = () => {
+    document.removeEventListener('keydown', this.#closePopupKey);
+    const popupElement = document.querySelector ('.film-details');
+    this.#bodyElement.removeChild (popupElement);
+    this.#bodyElement.classList.remove ('hide-overflow');
+  };
+
 }

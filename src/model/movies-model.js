@@ -2,7 +2,7 @@ import {movies} from '../data';
 import Observable from '../framework/observable.js';
 
 export default class MoviesModel extends Observable{
-  #movies = movies.slice ();
+  #movies = movies;
 
   get movies () {return this.#movies;}
 

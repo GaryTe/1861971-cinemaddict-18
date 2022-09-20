@@ -165,12 +165,14 @@ export default class MasterPresenter {
 
 
   #checkBeforeUpgrade = (actionType, updateType, update, filter) => {
-    if (this.#filterModel.filter === filter || this.#filterModel.filter === 'all') {
+    if (this.#filterModel.filter === filter && update.userDetails[filter] === false || this.#filterModel.filter === 'all') {
       this.#handleViewAction (actionType, updateType, update);
       this.#addMovieBeforeDelet (actionType, update);
       return;
     }
     if (this.#collectionMovieCard.get (update.id) === undefined) {
+      const index = this.#moviesModel.movies.findIndex((movie) => movie.id === update.id);
+      this.#moviesModel.movies.splice(index, 1, update);
       this.#handleViewAction (
         actionType = UserAction.ADD_TASK,
         updateType = UpdateType.MINOR,
@@ -205,7 +207,9 @@ export default class MasterPresenter {
     switch (updateType) {
       case UpdateType.PATCH:
         this.#collectionMovieCard.get (updatedMovie.id).init (updatedMovie);
-        this.#popup.init (updatedMovie);
+        if (this.#popup !== null) {
+          this.#popup.init (updatedMovie);
+        }
         break;
       case UpdateType.MINOR:
         this.#clearBoard ();
@@ -213,9 +217,11 @@ export default class MasterPresenter {
         if (this.#popup !== null) {
           this.#popup.init (updatedMovie);
         }
+        /*
         if (this.#collectionMovieCard.get (updatedMovie.id) !== undefined) {
           this.#collectionMovieCard.get (updatedMovie.id).init (updatedMovie);
         }
+        */
         break;
       case UpdateType.MAJOR:
         this.#clearBoard ({resetRenderedMovieCount: true, resetSortType: true});

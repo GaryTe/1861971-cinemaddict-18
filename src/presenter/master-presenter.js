@@ -3,6 +3,7 @@ import MessageView from '../view/message-view.js';
 import MovieCardPresenter from './movie-cards-presenter.js';
 import SortingView from '../view/sorting-view.js';
 import PopupPresenter from './popup-presenter.js';
+import NumberOfFilmsView from '../view/number-of-films-view.js';
 import {RenderPosition, render, remove} from '../framework/render.js';
 import {UserAction, UpdateType, SortType, FilterType} from '../const.js';
 import {sortByDate, sortByRating, sortDataByKey, gettingValues} from '../utils.js';
@@ -20,6 +21,8 @@ export default class MasterPresenter {
   #sortingView = null;
   #messageView = null;
   #popup = null;
+  #numberOfFilmsView = null;
+  #sectionElement = null;
 
 
   #filterType = FilterType.ALL;
@@ -28,13 +31,14 @@ export default class MasterPresenter {
   #currentSortType = SortType.SORT_BY_DEFAULT;
 
 
-  constructor (container, footerElement, moviesModel, bodyElement, containerView, filterModel) {
+  constructor (container, footerElement, moviesModel, bodyElement, containerView, filterModel, sectionElement) {
     this.#bodyElement = bodyElement;
     this.#container = container;
     this.#footerElement = footerElement;
     this.#moviesModel = moviesModel;
     this.#containerView = containerView;
     this.#filterModel = filterModel;
+    this.#sectionElement = sectionElement;
 
     this.#moviesModel.addObserver (this.#handleModelEvent);
     this.#filterModel.addObserver (this.#handleModelEvent);
@@ -72,6 +76,7 @@ export default class MasterPresenter {
       return;
     }
 
+    this.#renderNumberOfFilmsView ();
     this.#removeMessageView ();
     this.#renderSortingView ();
 
@@ -81,6 +86,17 @@ export default class MasterPresenter {
       this.#renderButtonView ();
     }
 
+  };
+
+
+  #removeNumberOfFilmsView = () => {
+    remove (this.#numberOfFilmsView);
+  };
+
+
+  #renderNumberOfFilmsView = () => {
+    this.#numberOfFilmsView = new NumberOfFilmsView (this.#moviesModel.movies.length);
+    render(this.#numberOfFilmsView, this.#sectionElement);
   };
 
 
@@ -237,6 +253,7 @@ export default class MasterPresenter {
     this.#collectionMovieCard.forEach ((movieCard) => movieCard.destroy());
     this.#collectionMovieCard.clear();
 
+    this.#removeNumberOfFilmsView ();
     this.#removeSortingView ();
     this.#removeMessageView ();
     this.#removeButton ();

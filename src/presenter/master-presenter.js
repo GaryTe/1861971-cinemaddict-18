@@ -4,6 +4,7 @@ import MovieCardPresenter from './movie-cards-presenter.js';
 import SortingView from '../view/sorting-view.js';
 import PopupPresenter from './popup-presenter.js';
 import NumberOfFilmsView from '../view/number-of-films-view.js';
+import LoadingView from '../view/loading-view.js';
 import {RenderPosition, render, remove} from '../framework/render.js';
 import {UserAction, UpdateType, SortType, FilterType} from '../const.js';
 import {sortByDate, sortByRating, sortDataByKey, gettingValues} from '../utils.js';
@@ -29,6 +30,8 @@ export default class MasterPresenter {
   #counterNumber = COUNTER;
   #collectionMovieCard = new Map ();
   #currentSortType = SortType.SORT_BY_DEFAULT;
+  #loadingView = new LoadingView;
+  #isLoading = true;
 
 
   constructor (container, footerElement, moviesModel, bodyElement, containerView, filterModel, sectionElement) {
@@ -67,6 +70,12 @@ export default class MasterPresenter {
 
 
   #checkFilmContainer = () => {
+
+    if (this.#isLoading) {
+      this.#renderLoadingView ();
+      return;
+    }
+
     const movies = this.movies;
     const movieCount = movies.length;
 
@@ -86,6 +95,11 @@ export default class MasterPresenter {
       this.#renderButtonView ();
     }
 
+  };
+
+
+  #renderLoadingView = () => {
+    render(this.#loadingView, this.#containerView.element, RenderPosition.AFTERBEGIN);
   };
 
 
@@ -233,14 +247,14 @@ export default class MasterPresenter {
         if (this.#popup !== null) {
           this.#popup.init (updatedMovie);
         }
-        /*
-        if (this.#collectionMovieCard.get (updatedMovie.id) !== undefined) {
-          this.#collectionMovieCard.get (updatedMovie.id).init (updatedMovie);
-        }
-        */
         break;
       case UpdateType.MAJOR:
         this.#clearBoard ({resetRenderedMovieCount: true, resetSortType: true});
+        this.#checkFilmContainer ();
+        break;
+      case UpdateType.INIT:
+        this.#isLoading = false;
+        remove(this.#loadingView);
         this.#checkFilmContainer ();
         break;
     }
@@ -257,6 +271,7 @@ export default class MasterPresenter {
     this.#removeSortingView ();
     this.#removeMessageView ();
     this.#removeButton ();
+    remove (this.#loadingView);
 
     if (resetRenderedMovieCount) {
       this.#counterNumber = COUNTER;

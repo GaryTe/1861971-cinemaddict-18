@@ -32,3 +32,6 @@ filterPresenter.init ();
 const masterPresenter = new MasterPresenter (container, footerElement, moviesModel, bodyElement,
   containerView, filterModel, sectionElement);
 masterPresenter.init ();
+
+
+moviesModel.init ();

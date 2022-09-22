@@ -1,46 +1,48 @@
-import {movies} from '../data';
+//import {movies} from '../data';
+import { UpdateType } from '../const';
 import Observable from '../framework/observable.js';
 
 export default class MoviesModel extends Observable{
-  #movies = movies;
+  #movies = [];
   #moviesService = null;
 
 
   constructor (moviesService) {
     super ();
     this.#moviesService = moviesService;
-
-    this.#moviesService.tasks.then((movieCards) => {
-      console.log (movieCards);
-      console.log(movieCards.map (this.#adaptToClient));
-    });
   }
 
 
   #adaptToClient = (movie) => {
 
-    const adaptedTask = {...movie,
-      filmInfo: movie ['film_info'],
-      ageRating: movie ['film_info']['age_rating'],
-      alternativeTitle: movie ['film_info'] ['alternative_title'],
-      releaseCountry: movie ['film_info'] ['release'] ['release_country'],
-      totalRating: movie ['film_info'] ['total_rating'],
-      userDetails: movie ['user_details'],
-      alreadyWatched: movie ['user_details'] ['already_watched'],
-      watchingDate: movie ['user_details'] ['watching_date']
+    const adaptedMovie = {...movie,
+      filmInfo:{
+        ...movie ['film_info'],
+        ageRating: movie ['film_info']['age_rating'],
+        alternativeTitle: movie ['film_info'] ['alternative_title'],
+        release:{
+          ...movie ['film_info'] ['release'],
+          releaseCountry:  movie ['film_info'] ['release'] ['release_country'],
+        },
+        totalRating: movie ['film_info'] ['total_rating'],
+      },
+      userDetails:{
+        ...movie ['user_details'],
+        alreadyWatched: movie ['user_details'] ['already_watched'],
+        watchingDate: movie ['user_details'] ['watching_date']
+      }
     };
 
+    delete adaptedMovie.filmInfo ['age_rating'];
+    delete adaptedMovie.filmInfo ['alternative_title'];
+    delete adaptedMovie.filmInfo.release ['release_country'];
+    delete adaptedMovie.filmInfo ['total_rating'];
+    delete adaptedMovie.userDetails ['already_watched'];
+    delete adaptedMovie.userDetails ['watching_date'];
+    delete adaptedMovie ['user_details'];
+    delete adaptedMovie ['film_info'];
 
-    delete adaptedTask ['film_info'] ['age_rating'];
-    delete adaptedTask ['film_info'] ['alternative_title'];
-    delete adaptedTask ['film_info'] ['release'] ['release_country'];
-    delete adaptedTask ['film_info'] ['total_rating'];
-    delete adaptedTask ['user_details'] ['already_watched'];
-    delete adaptedTask ['user_details'] ['watching_date'];
-    delete adaptedTask ['user_details'];
-    delete adaptedTask ['film_info'];
-
-    return adaptedTask;
+    return adaptedMovie;
   };
 
 
@@ -54,20 +56,37 @@ export default class MoviesModel extends Observable{
   }
 
 
-  updatedMovie = (updateType, update) => {
+  init = async () => {
+    try {
+      const films = await this.#moviesService.tasks;
+      this.#movies = films.map(this.#adaptToClient);
+    } catch(err) {
+      this.#movies = [];
+    }
+    this._notify (UpdateType.INIT);
+  };
+
+
+  updatedMovie = async (updateType, update) => {
     const index = this.#movies.findIndex((movie) => movie.id === update.id);
 
     if (index === -1) {
       throw new Error('Can\'t update unexisting movie card');
     }
 
-    this.#movies = [
-      ...this.#movies.slice(0, index),
-      update,
-      ...this.#movies.slice(index + 1),
-    ];
+    try {
+      const response = await this.#moviesService.updatedFilm (update);
+      const updatedMovie = this.#adaptToClient(response);
 
-    this._notify(updateType, update);
+      this.#movies = [
+        ...this.#movies.slice(0, index),
+        updatedMovie,
+        ...this.#movies.slice(index + 1),
+      ];
+      this._notify(updateType, updatedMovie);
+    }catch(err) {
+      throw new Error('Can\'t update task');
+    }
   };
 
 

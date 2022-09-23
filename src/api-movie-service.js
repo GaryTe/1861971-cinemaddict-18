@@ -6,7 +6,7 @@ const Method = {
 };
 
 export default class ApiMovieService extends ApiService {
-  get tasks() {
+  get film() {
     return this._load({url: 'movies'})
       .then(ApiService.parseResponse);
   }
@@ -46,7 +46,7 @@ export default class ApiMovieService extends ApiService {
     };
 
     delete adaptedMovie ['film_info'].ageRating;
-    delete adaptedMovie ['film_info'].alternative_title;
+    delete adaptedMovie ['film_info'].alternativeTitle;
     delete adaptedMovie ['film_info'] ['release'].releaseCountry;
     delete adaptedMovie ['film_info'].totalRating;
     delete adaptedMovie ['user_details'].alreadyWatched;

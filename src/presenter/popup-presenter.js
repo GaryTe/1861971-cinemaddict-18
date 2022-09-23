@@ -17,13 +17,13 @@ export default class PopupPresenter {
   #userAction = UserAction.UPDATE_TASK;
   #updateType = UpdateType.MAJOR;
 
-  constructor (footerElement, closPopup, popupChange, bodyElement, filter) {
+  constructor (footerElement, closPopup, popupChange, bodyElement, updateType, userAction) {
     this.#footerElement = footerElement;
     this.#closPopup = closPopup;
     this.#popupChange = popupChange;
     this.#bodyElement = bodyElement;
-    this.#userAction = filter.userAction;
-    this.#updateType = filter.updateType;
+    this.#userAction = userAction;
+    this.#updateType = updateType;
   }
 
 

@@ -16,35 +16,26 @@ const humanizeDateMonthYear = (data) => dayjs (data).format ('DD MMMM YYYY');
 const humanizeDateMonthYearHourMinute = (data) => dayjs (data).format ('YYYY/MM/DD HH:mm');
 
 
-const sortByDate = (movies) => {
-  const sortMovies = byDate (movies);
-  return sortMovies.reverse ();
-};
+const sortByDate = (movies) => movies.slice ().sort ((a,b) => {
+  if (humanizeYear (a.filmInfo.release.date) < humanizeYear (b.filmInfo.release.date)) {
+    return -1;
+  }
+  if (humanizeYear (a.filmInfo.release.date) > humanizeYear (b.filmInfo.release.date)) {
+    return 1;
+  }
+  return 0;
+}).reverse ();
 
-function byDate (movies) {
-  const sortMovies = movies.slice ();
-  sortMovies.sort ((a,b) => {
-    if (humanizeYear (a.filmInfo.release.date) < humanizeYear (b.filmInfo.release.date)) {
-      return -1;
-    }
-  });
-  return sortMovies;
-}
 
-const sortByRating = (movies) => {
-  const sortMovies = byRating (movies);
-  return sortMovies.reverse ();
-};
-
-function byRating (movies) {
-  const sortMovies = movies.slice ();
-  sortMovies.sort ((a,b) => {
-    if (a.filmInfo.totalRating < b.filmInfo.totalRating) {
-      return -1;
-    }
-  });
-  return sortMovies;
-}
+const sortByRating = (movies) => movies.slice ().sort ((a,b) => {
+  if (a.filmInfo.totalRating < b.filmInfo.totalRating) {
+    return -1;
+  }
+  if (a.filmInfo.totalRating > b.filmInfo.totalRating) {
+    return 1;
+  }
+  return 0;
+}).reverse ();
 
 
 function sortDataByKey (filterNames, movies) {
@@ -68,8 +59,8 @@ function gettingValues (keyValue) {
     updateType: UpdateType.PATCH,
   };
   if (keyValue !== 'all') {
-    value.userAction = UserAction.DELETE_TASK;
-    value.updateType = UpdateType.MINOR;
+    value.userAction = UserAction.UPDATE_TASK;
+    value.updateType = UpdateType.MAJOR;
   }
   return value;
 }

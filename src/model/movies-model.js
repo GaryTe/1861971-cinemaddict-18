@@ -58,7 +58,7 @@ export default class MoviesModel extends Observable{
 
   init = async () => {
     try {
-      const films = await this.#moviesService.tasks;
+      const films = await this.#moviesService.film;
       this.#movies = films.map(this.#adaptToClient);
     } catch(err) {
       this.#movies = [];
@@ -76,14 +76,14 @@ export default class MoviesModel extends Observable{
 
     try {
       const response = await this.#moviesService.updatedFilm (update);
-      const updatedMovie = this.#adaptToClient(response);
+      const updatedMovieCard = this.#adaptToClient(response);
 
       this.#movies = [
         ...this.#movies.slice(0, index),
-        updatedMovie,
+        updatedMovieCard,
         ...this.#movies.slice(index + 1),
       ];
-      this._notify(updateType, updatedMovie);
+      this._notify(updateType, updatedMovieCard);
     }catch(err) {
       throw new Error('Can\'t update task');
     }

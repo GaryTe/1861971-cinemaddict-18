@@ -164,7 +164,7 @@ export default class PopupView extends AbstractStatefulView {
   constructor (data) {
     super ();
     this._state = PopupView.popupToState (data);
-    this.#addHandlersToInputFieldsAndEmoji ();
+    this.#setInnerHandlers ();
     this.#scroll ();
   }
 
@@ -175,7 +175,7 @@ export default class PopupView extends AbstractStatefulView {
 
 
   _restoreHandlers = () => {
-    this.#addHandlersToInputFieldsAndEmoji ();
+    this.#setInnerHandlers ();
     this.#scroll ();
     this.setClickHandler (this._callback.click);
     this.setAddToWatchlis (this._callback.addToWatchlis);
@@ -253,7 +253,7 @@ export default class PopupView extends AbstractStatefulView {
   };
 
 
-  #addHandlersToInputFieldsAndEmoji () {
+  #setInnerHandlers () {
     const emotions = this.element.querySelectorAll ('.film-details__emoji-item');
     for (const emotion of emotions) {
       emotion.addEventListener ('change', this.#choiceOfEmotion);

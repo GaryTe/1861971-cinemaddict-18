@@ -186,18 +186,19 @@ export default class MasterPresenter {
     this.#collectionMovieCard.set (data.id, movieCardPresenter);
   };
 
-
+/*
   #addMovieBeforeDelet = (actionType, update) => {
     if (actionType === 'DELETE_TASK') {
       this.#moviesModel.movies = update;
     }
   };
+*/
 
 
   #checkBeforeUpgrade = (actionType, updateType, update, filter) => {
-    if (this.#filterModel.filter === filter && update.userDetails[filter] === false || this.#filterModel.filter === 'all') {
+    if (this.#filterModel.filter === filter && !update.userDetails[filter] || this.#filterModel.filter === 'all') {
       this.#handleViewAction (actionType, updateType, update);
-      this.#addMovieBeforeDelet (actionType, update);
+      //this.#addMovieBeforeDelet (actionType, update);
       return;
     }
     if (this.#collectionMovieCard.get (update.id) === undefined) {
@@ -251,6 +252,9 @@ export default class MasterPresenter {
       case UpdateType.MAJOR:
         this.#clearBoard ({resetRenderedMovieCount: true, resetSortType: true});
         this.#checkFilmContainer ();
+        if (this.#popup !== null) {
+          this.#popup.init (updatedMovie);
+        }
         break;
       case UpdateType.INIT:
         this.#isLoading = false;
@@ -288,8 +292,8 @@ export default class MasterPresenter {
   #renderPopup = (movie) => {
     document.addEventListener('keydown',this.#closePopupKey);
     this.#checkOpenPopups ();
-    this.#popup = new PopupPresenter (this.#footerElement, this.#closPopup, this.#checkBeforeUpgrade, this.#bodyElement,
-      gettingValues (this.#filterModel.filter));
+    this.#popup = new PopupPresenter (this.#footerElement, this.#closePopup, this.#checkBeforeUpgrade, this.#bodyElement,
+      UpdateType.MAJOR, UserAction.UPDATE_TASK);
     this.#popup.init (movie);
     this.#bodyElement.classList.add ('hide-overflow');
   };
@@ -304,13 +308,13 @@ export default class MasterPresenter {
 
   #closePopupKey = (evt) => {
     if(evt.key === 'Esc' || evt.key === 'Escape') {
-      this.#closPopup();
+      this.#closePopup();
       document.removeEventListener('keydown', this.#closePopupKey);
     }
   };
 
 
-  #closPopup = () => {
+  #closePopup = () => {
     document.removeEventListener('keydown', this.#closePopupKey);
     const popupElement = document.querySelector ('.film-details');
     this.#bodyElement.removeChild (popupElement);

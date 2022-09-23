@@ -186,19 +186,10 @@ export default class MasterPresenter {
     this.#collectionMovieCard.set (data.id, movieCardPresenter);
   };
 
-/*
-  #addMovieBeforeDelet = (actionType, update) => {
-    if (actionType === 'DELETE_TASK') {
-      this.#moviesModel.movies = update;
-    }
-  };
-*/
-
 
   #checkBeforeUpgrade = (actionType, updateType, update, filter) => {
     if (this.#filterModel.filter === filter && !update.userDetails[filter] || this.#filterModel.filter === 'all') {
       this.#handleViewAction (actionType, updateType, update);
-      //this.#addMovieBeforeDelet (actionType, update);
       return;
     }
     if (this.#collectionMovieCard.get (update.id) === undefined) {
@@ -293,7 +284,7 @@ export default class MasterPresenter {
     document.addEventListener('keydown',this.#closePopupKey);
     this.#checkOpenPopups ();
     this.#popup = new PopupPresenter (this.#footerElement, this.#closePopup, this.#checkBeforeUpgrade, this.#bodyElement,
-      UpdateType.MAJOR, UserAction.UPDATE_TASK);
+      gettingValues (this.#filterModel.filter));
     this.#popup.init (movie);
     this.#bodyElement.classList.add ('hide-overflow');
   };

@@ -31,7 +31,7 @@ const sortByRating = (movies) => movies.slice ().sort ((a,b) => {
   if (a.filmInfo.totalRating < b.filmInfo.totalRating) {
     return -1;
   }
-  if (a.filmInfo.totalRating > b.filmInfo.totalRating) {
+  if (a.filmInfo.totalRating < b.filmInfo.totalRating) {
     return 1;
   }
   return 0;
@@ -59,8 +59,8 @@ function gettingValues (keyValue) {
     updateType: UpdateType.PATCH,
   };
   if (keyValue !== 'all') {
-    value.userAction = UserAction.UPDATE_TASK;
-    value.updateType = UpdateType.MAJOR;
+    value.userAction = UserAction.DELETE_TASK;
+    value.updateType = UpdateType.MINOR;
   }
   return value;
 }

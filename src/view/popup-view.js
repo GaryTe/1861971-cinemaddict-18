@@ -1,17 +1,9 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-import { humanizeDateMonthYear, humanizeHour, humanizeMinute, getRandomInteger, humanizeDateMonthYearHourMinute} from '../utils.js';
+import { humanizeDateMonthYear, humanizeHour, humanizeMinute, humanizeDateMonthYearHourMinute} from '../utils.js';
 
 
-const createPopup = (data) => {
-  const {index, filmInfo, comments, userDetails, emoji, description} = data;
-
-  const getGenre = () => {
-    const datas = filmInfo.genre.slice (0,getRandomInteger (0, 2));
-    datas.unshift (filmInfo.genre[index]);
-    return datas;
-  };
-
-  const genres = getGenre();
+const createPopup = (data, commentatorsData) => {
+  const {filmInfo, comments, userDetails, emoji, description} = data;
 
 
   const putEmotion = () => {
@@ -24,9 +16,10 @@ const createPopup = (data) => {
 
   function getListComments () {
     const listComments = [];
-    for(let i = 0; i < comments.length; i++){
-      const {author, comment, emotion, date} = comments [i];
-      const descriptionsComment = `<li class="film-details__comment">
+    for(let i = 0; i < commentatorsData.length; i++){
+      if (comments [i] === commentatorsData [i].id){
+        const {author, comment, emotion, date} = commentatorsData [i];
+        const descriptionsComment = `<li class="film-details__comment">
       <span class="film-details__comment-emoji">
         <img src="images/emoji/${emotion}.png" width="55" height="55" alt="emoji-${emotion}">
       </span>
@@ -39,7 +32,8 @@ const createPopup = (data) => {
         </p>
       </div>
     </li>`;
-      listComments.push(descriptionsComment);
+        listComments.push(descriptionsComment);
+      }
     }
     return listComments;
   }
@@ -95,12 +89,10 @@ const createPopup = (data) => {
             <td class="film-details__cell">${filmInfo.release.releaseCountry}</td>
           </tr>
           <tr class="film-details__row">
-            <td class="film-details__term">${genres.length > 1 ? 'Genres' : 'Genre'}</td>
+            <td class="film-details__term">${filmInfo.genre.length > 1 ? 'Genres' : 'Genre'}</td>
             <td class="film-details__cell">
-              <span class="film-details__genre">${genres [0]}</span>
-              ${genres [1] !== undefined ? `<span class="film-details__genre">${genres [1]}</span>` : '<span class="film-details__genre"></span>'}
-              ${genres [2] !== undefined ? `<span class="film-details__genre">${genres [2]}</span>` : '<span class="film-details__genre"></span>'}
-              </td>
+              <span class="film-details__genre">${filmInfo.genre.join (' , ')}</span>
+            </td>
           </tr>
         </table>
 
@@ -160,17 +152,19 @@ const createPopup = (data) => {
 
 export default class PopupView extends AbstractStatefulView {
   #scrollCoordinate = 0;
+  #comments = [];
 
-  constructor (data) {
+  constructor (data, comments) {
     super ();
     this._state = PopupView.popupToState (data);
+    this.#comments = comments;
     this.#setInnerHandlers ();
     this.#scroll ();
   }
 
 
   get template() {
-    return createPopup(this._state);
+    return createPopup(this._state, this.#comments);
   }
 
 
@@ -198,14 +192,14 @@ export default class PopupView extends AbstractStatefulView {
     const buttons = this.element.querySelectorAll ('.film-details__comment-delete');
     for (let i = 0; i < buttons.length; i++) {
       buttons [i].addEventListener ('click', () => {
-        this.#deleteComment (i);
+        this.#deleteComment (this.#comments [i]);
       });
     }
   }
 
 
-  #deleteComment = (id) => {
-    this._callback.deleteComment (id, this.#scrollCoordinate);
+  #deleteComment = (comment) => {
+    this._callback.deleteComment (comment, this.#scrollCoordinate);
   };
 
 

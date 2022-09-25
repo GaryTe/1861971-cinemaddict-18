@@ -1,4 +1,3 @@
-//import {movies} from '../data';
 import { UpdateType } from '../const';
 import Observable from '../framework/observable.js';
 
@@ -48,13 +47,6 @@ export default class MoviesModel extends Observable{
 
   get movies () {return this.#movies;}
 
-  set movies (update) {
-    this.#movies = [
-      update,
-      ...this.#movies,
-    ];
-  }
-
 
   init = async () => {
     try {
@@ -67,7 +59,7 @@ export default class MoviesModel extends Observable{
   };
 
 
-  updatedMovie = async (updateType, update) => {
+  updatMovie = async (updateType, update) => {
     const index = this.#movies.findIndex((movie) => movie.id === update.id);
 
     if (index === -1) {
@@ -89,29 +81,4 @@ export default class MoviesModel extends Observable{
     }
   };
 
-
-  addMovie = (updateType, update) => {
-    this.#movies = [
-      update,
-      ...this.#movies,
-    ];
-
-    this._notify(updateType, update);
-  };
-
-
-  deleteMovie = (updateType, update) => {
-    const index = this.#movies.findIndex((movie) => movie.id === update.id);
-
-    if (index === -1) {
-      throw new Error('Can\'t delete unexisting movie card');
-    }
-
-    this.#movies = [
-      ...this.#movies.slice(0, index),
-      ...this.#movies.slice(index + 1),
-    ];
-
-    this._notify(updateType, update);
-  };
 }

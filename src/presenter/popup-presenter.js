@@ -1,6 +1,6 @@
 import PopupView from '../view/popup-view.js';
 import {render, replace, RenderPosition} from '../framework/render.js';
-import { UpdateType, UserAction, FilterType} from '../const.js';
+import {UpdateType, UserAction} from '../const.js';
 
 
 export default class PopupPresenter {
@@ -11,31 +11,34 @@ export default class PopupPresenter {
   #popupChange = null;
   #bodyElement = null;
   #film = null;
+  #handleActionCommentsModel = null;
+  #userAction = null;
+  #updateType = null;
 
   #scrollCoordinate = 0;
 
-  #userAction = UserAction.UPDATE_TASK;
-  #updateType = UpdateType.MAJOR;
 
-  constructor (footerElement, closPopup, popupChange, bodyElement, filter) {
+  constructor (footerElement, closPopup, popupChange, bodyElement, userAction, updateType, handleActionCommentsModel) {
     this.#footerElement = footerElement;
     this.#closPopup = closPopup;
     this.#popupChange = popupChange;
     this.#bodyElement = bodyElement;
-    this.#userAction = filter.userAction;
-    this.#updateType = filter.updateType;
+    this.#userAction = userAction;
+    this.#updateType = updateType;
+    this.#handleActionCommentsModel = handleActionCommentsModel;
   }
 
 
   get prevPopup () {return this.#popup;}
 
 
-  init (movie) {
+  init (movie, comments) {
     this.#movie = movie;
+
 
     const prevPopup = this.#popup;
 
-    this.#popup = new PopupView (movie);
+    this.#popup = new PopupView (movie, comments);
 
     this.#addHandlersToPopup ();
 
@@ -57,7 +60,7 @@ export default class PopupPresenter {
     this.#popup.setAddToFavorites (this.#addToFavorites);
     this.#popup.setAlreadyWatched (this.#alreadyWatched);
     this.#popup.setDeleteComment (this.#deleteComment);
-    this.#popup.setReturnNewMovie (this.#getNewMovie);
+    this.#popup.setReturnNewMovie (this.#setNewMovie);
   };
 
 
@@ -66,8 +69,12 @@ export default class PopupPresenter {
   }
 
 
-  #getNewMovie = (movie) => {
-    this.#film = movie;
+  #setNewMovie = (movie) => {
+    this.#handleActionCommentsModel (
+      UserAction.ADD_MOVIE,
+      UpdateType.PATCH,
+      movie
+    );
   };
 
 
@@ -77,7 +84,6 @@ export default class PopupPresenter {
       this.#userAction,
       this.#updateType,
       {...this.#movie, userDetails: {...this.#movie.userDetails,watchlist : !this.#movie.userDetails.watchlist}},
-      FilterType.WATCHLIST
     );
   };
 
@@ -88,7 +94,6 @@ export default class PopupPresenter {
       this.#userAction,
       this.#updateType,
       {...this.#movie, userDetails: {...this.#movie.userDetails,alreadyWatched : !this.#movie.userDetails.alreadyWatched}},
-      FilterType.ALREADY_WATCHED
     );
   };
 
@@ -99,17 +104,17 @@ export default class PopupPresenter {
       this.#userAction,
       this.#updateType,
       {...this.#movie, userDetails: {...this.#movie.userDetails,favorite : !this.#movie.userDetails.favorite}},
-      FilterType.FAVORITE
     );
   };
 
 
-  #deleteComment = (id,coordinate) => {
+  #deleteComment = (commentary,coordinate) => {
     this.#scrollCoordinate = coordinate;
-    this.#popupChange (
-      UserAction.UPDATE_TASK,
+    this.#handleActionCommentsModel (
+      UserAction.DELETE_MOVIE,
       UpdateType.PATCH,
-      {...this.#movie, comments: [...this.#movie.comments.filter ((comment) => comment !== this.#movie.comments[id])]}
+      {...this.#movie, comments: [...this.#movie.comments.filter ((comment) => comment !== commentary.id)]},
+      commentary
     );
   };
 

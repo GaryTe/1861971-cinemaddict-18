@@ -1,6 +1,6 @@
 import MovieCardView from '../view/movie-card-view.js';
 import {render, remove, replace} from '../framework/render.js';
-import {UserAction, UpdateType, FilterType} from '../const.js';
+import {FilterType} from '../const.js';
 
 export default class MovieCardsPresenter {
   #movieCard = null;
@@ -8,15 +8,14 @@ export default class MovieCardsPresenter {
   #movieChange = null;
   #movie = null;
   #renderPopup = null;
+  #userAction = null;
+  #updateType = null;
 
-  #userAction = UserAction.UPDATE_TASK;
-  #updateType = UpdateType.MAJOR;
-
-  constructor (container, movieChange, filter, renderPopup) {
+  constructor (container, movieChange, userAction, updateType, renderPopup) {
     this.#container = container;
     this.#movieChange = movieChange;
-    this.#userAction = filter.userAction;
-    this.#updateType = filter.updateType;
+    this.#userAction = userAction;
+    this.#updateType = updateType;
     this.#renderPopup = renderPopup;
 
   }

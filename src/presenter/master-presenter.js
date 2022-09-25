@@ -7,7 +7,7 @@ import NumberOfFilmsView from '../view/number-of-films-view.js';
 import LoadingView from '../view/loading-view.js';
 import {RenderPosition, render, remove} from '../framework/render.js';
 import {UserAction, UpdateType, SortType, FilterType} from '../const.js';
-import {sortByDate, sortByRating, sortDataByKey, gettingValues} from '../utils.js';
+import {sortByDate, sortByRating, sortDataByKey} from '../utils.js';
 
 const COUNTER = 5;
 
@@ -24,6 +24,7 @@ export default class MasterPresenter {
   #popup = null;
   #numberOfFilmsView = null;
   #sectionElement = null;
+  #commentsModel = null;
 
 
   #filterType = FilterType.ALL;
@@ -34,7 +35,7 @@ export default class MasterPresenter {
   #isLoading = true;
 
 
-  constructor (container, footerElement, moviesModel, bodyElement, containerView, filterModel, sectionElement) {
+  constructor (container, footerElement, moviesModel, bodyElement, containerView, filterModel, sectionElement, commentsModel) {
     this.#bodyElement = bodyElement;
     this.#container = container;
     this.#footerElement = footerElement;
@@ -42,9 +43,11 @@ export default class MasterPresenter {
     this.#containerView = containerView;
     this.#filterModel = filterModel;
     this.#sectionElement = sectionElement;
+    this.#commentsModel = commentsModel;
 
     this.#moviesModel.addObserver (this.#handleModelEvent);
     this.#filterModel.addObserver (this.#handleModelEvent);
+    this.#commentsModel.addObserver (this.#handleCommentModelEvent);
   }
 
 
@@ -180,46 +183,17 @@ export default class MasterPresenter {
 
 
   #renderMovieCardAndPopup = (data) => {
-    const movieCardPresenter = new MovieCardPresenter (this.#container, this.#checkBeforeUpgrade,
-      gettingValues (this.#filterModel.filter), this.#renderPopup);
+    const movieCardPresenter = new MovieCardPresenter (this.#container, this.#handleViewAction,
+      UserAction.UPDATE_MOVIE, UpdateType.MAJOR, this.#handleActionCommentsModel);
     movieCardPresenter.init (data);
     this.#collectionMovieCard.set (data.id, movieCardPresenter);
   };
 
 
-  #checkBeforeUpgrade = (actionType, updateType, update, filter) => {
-    if (this.#filterModel.filter === filter && !update.userDetails[filter] || this.#filterModel.filter === 'all') {
-      this.#handleViewAction (actionType, updateType, update);
-      return;
-    }
-    if (this.#collectionMovieCard.get (update.id) === undefined) {
-      const index = this.#moviesModel.movies.findIndex((movie) => movie.id === update.id);
-      this.#moviesModel.movies.splice(index, 1, update);
-      this.#handleViewAction (
-        actionType = UserAction.ADD_TASK,
-        updateType = UpdateType.MINOR,
-        update
-      );
-      return;
-    }
-    this.#handleViewAction (
-      actionType = UserAction.UPDATE_TASK,
-      updateType = UpdateType.PATCH,
-      update
-    );
-  };
-
-
   #handleViewAction = (actionType, updateType, update) => {
     switch (actionType) {
-      case UserAction.UPDATE_TASK:
-        this.#moviesModel.updatedMovie(updateType, update);
-        break;
-      case UserAction.ADD_TASK:
-        this.#moviesModel.addMovie(updateType, update);
-        break;
-      case UserAction.DELETE_TASK:
-        this.#moviesModel.deleteMovie(updateType, update);
+      case UserAction.UPDATE_MOVIE:
+        this.#moviesModel.updatMovie(updateType, update);
         break;
     }
   };
@@ -227,6 +201,7 @@ export default class MasterPresenter {
 
   #handleModelEvent = (updateType, updatedMovie) => {
     switch (updateType) {
+      /*
       case UpdateType.PATCH:
         this.#collectionMovieCard.get (updatedMovie.id).init (updatedMovie);
         if (this.#popup !== null) {
@@ -240,12 +215,13 @@ export default class MasterPresenter {
           this.#popup.init (updatedMovie);
         }
         break;
+        */
       case UpdateType.MAJOR:
-        this.#clearBoard ({resetRenderedMovieCount: true, resetSortType: true});
-        this.#checkFilmContainer ();
         if (this.#popup !== null) {
           this.#popup.init (updatedMovie);
         }
+        this.#clearBoard ({resetRenderedMovieCount: true, resetSortType: true});
+        this.#checkFilmContainer ();
         break;
       case UpdateType.INIT:
         this.#isLoading = false;
@@ -280,12 +256,43 @@ export default class MasterPresenter {
   };
 
 
-  #renderPopup = (movie) => {
+  #handleActionCommentsModel = (actionType, updateType, update, comment) => {
+    switch (actionType) {
+      case UserAction.DELETE_MOVIE:
+        this.#commentsModel.deleteComment (updateType, update, comment);
+        break;
+      case UserAction.ADD_MOVIE:
+        this.#commentsModel.addComment (updateType, update);
+        break;
+      default:
+        this.#commentsModel.getComments (update);
+        break;
+    }
+  };
+
+
+  #handleCommentModelEvent = (updateType, updatedMovie) => {
+    const {update, commentary} = updatedMovie;
+    switch (updateType) {
+      case UpdateType.PATCH:
+        this.#collectionMovieCard.get (update.id).init (update);
+        if (this.#popup !== null) {
+          this.#popup.init (update, commentary);
+        }
+        break;
+      default:
+        this.#renderPopup (updateType, updatedMovie);
+        break;
+    }
+  };
+
+
+  #renderPopup = (movie, comments) => {
     document.addEventListener('keydown',this.#closePopupKey);
     this.#checkOpenPopups ();
-    this.#popup = new PopupPresenter (this.#footerElement, this.#closePopup, this.#checkBeforeUpgrade, this.#bodyElement,
-      gettingValues (this.#filterModel.filter));
-    this.#popup.init (movie);
+    this.#popup = new PopupPresenter (this.#footerElement, this.#closePopup, this.#handleViewAction, this.#bodyElement,
+      UserAction.UPDATE_MOVIE, UpdateType.MAJOR, this.#handleActionCommentsModel);
+    this.#popup.init (movie, comments);
     this.#bodyElement.classList.add ('hide-overflow');
   };
 

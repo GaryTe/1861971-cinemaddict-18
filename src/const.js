@@ -6,9 +6,9 @@ const UpdateType = {
 };
 
 const UserAction = {
-  UPDATE_TASK: 'UPDATE_TASK',
-  ADD_TASK: 'ADD_TASK',
-  DELETE_TASK: 'DELETE_TASK',
+  UPDATE_MOVIE: 'UPDATE_TASK',
+  ADD_MOVIE: 'ADD_TASK',
+  DELETE_MOVIE: 'DELETE_TASK',
 };
 
 const SortType = {

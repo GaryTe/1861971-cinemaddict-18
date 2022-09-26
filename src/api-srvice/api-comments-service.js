@@ -24,7 +24,7 @@ export default class ApiCommentsService extends ApiService {
     const response = await this._load({
       url: `comments/${film.id}`,
       method: Method.POST,
-      body: JSON.stringify(this.#adaptToServer(film)),
+      body: JSON.stringify(this.#adaptToServer (film)),
       headers: new Headers({'Content-Type': 'application/json'}),
     });
 
@@ -37,31 +37,13 @@ export default class ApiCommentsService extends ApiService {
   #adaptToServer = (movie) => {
 
     const adaptedMovie = {...movie,
-      'film_info': {
-        ...movie.filmInfo,
-        'age_rating': movie.filmInfo.ageRating ,
-        'alternative_title': movie.filmInfo.alternativeTitle,
-        'release':{
-          ...movie.filmInfo.release,
-          'release_country': movie.filmInfo.release.releaseCountry
-        },
-        'total_rating': movie.filmInfo.totalRating,
-      },
-      'user_details':{
-        ...movie.userDetails,
-        'already_watched': movie.userDetails.alreadyWatched,
-        'watching_date': movie.userDetails.watchingDate
-      }
+      'comment': movie.description,
+      'emotion': movie.emoji,
     };
 
-    delete adaptedMovie ['film_info'].ageRating;
-    delete adaptedMovie ['film_info'].alternativeTitle;
-    delete adaptedMovie ['film_info'] ['release'].releaseCountry;
-    delete adaptedMovie ['film_info'].totalRating;
-    delete adaptedMovie ['user_details'].alreadyWatched;
-    delete adaptedMovie ['user_details'].watchingDate;
-    delete adaptedMovie.userDetails;
-    delete adaptedMovie.filmInfo;
+    delete adaptedMovie.id;
+    delete adaptedMovie.description;
+    delete adaptedMovie.emoji;
 
     return adaptedMovie;
   };

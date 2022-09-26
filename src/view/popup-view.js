@@ -285,7 +285,7 @@ export default class PopupView extends AbstractStatefulView {
 
 
   #parseStateToData = () => {
-    this._callback.returnNewMovie (PopupView.parseStateToData (this._state));
+    this._callback.returnNewMovie ({id: this._state.id, emoji: this._state.emoji, description: this._state.description});
   };
 
 

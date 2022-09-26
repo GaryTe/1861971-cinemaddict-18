@@ -1,5 +1,5 @@
 import PopupView from '../view/popup-view.js';
-import {render, replace, RenderPosition} from '../framework/render.js';
+import {render, replace, RenderPosition, remove} from '../framework/render.js';
 import {UpdateType, UserAction} from '../const.js';
 
 
@@ -51,6 +51,11 @@ export default class PopupPresenter {
       replace (this.#popup, prevPopup);
       this.#putPopupByCoordinates ();
     }
+  }
+
+
+  destroy () {
+    remove(this.#popup);
   }
 
 

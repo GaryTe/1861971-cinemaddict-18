@@ -33,6 +33,7 @@ export default class MasterPresenter {
   #currentSortType = SortType.SORT_BY_DEFAULT;
   #loadingView = new LoadingView;
   #isLoading = true;
+  #comments = [];
 
 
   constructor (container, footerElement, moviesModel, bodyElement, containerView, filterModel, sectionElement, commentsModel) {
@@ -218,7 +219,7 @@ export default class MasterPresenter {
         */
       case UpdateType.MAJOR:
         if (this.#popup !== null) {
-          this.#popup.init (updatedMovie);
+          this.#popup.init (updatedMovie, this.#comments);
         }
         this.#clearBoard ({resetRenderedMovieCount: true, resetSortType: true});
         this.#checkFilmContainer ();
@@ -288,11 +289,12 @@ export default class MasterPresenter {
 
 
   #renderPopup = (movie, comments) => {
+    this.#comments = comments;
     document.addEventListener('keydown',this.#closePopupKey);
     this.#checkOpenPopups ();
     this.#popup = new PopupPresenter (this.#footerElement, this.#closePopup, this.#handleViewAction, this.#bodyElement,
       UserAction.UPDATE_MOVIE, UpdateType.MAJOR, this.#handleActionCommentsModel);
-    this.#popup.init (movie, comments);
+    this.#popup.init (movie, this.#comments);
     this.#bodyElement.classList.add ('hide-overflow');
   };
 
@@ -316,6 +318,8 @@ export default class MasterPresenter {
     document.removeEventListener('keydown', this.#closePopupKey);
     const popupElement = document.querySelector ('.film-details');
     this.#bodyElement.removeChild (popupElement);
+    this.#popup.destroy ();
+    this.#popup = null;
     this.#bodyElement.classList.remove ('hide-overflow');
   };
 

@@ -1,16 +1,15 @@
-import UserNameView from './view/user-name-view.js';
-import NavigationMenuView from './view/navigation-menu-view.js';
 import ContainerView from './view/container-view.js';
-import NumberOfFilmsView from './view/number-of-films-view.js';
-import SortingView from './view/sorting-view.js';
 import MasterPresenter from './presenter/master-presenter.js';
 import FilterPresenter from './presenter/filter - presenter.js';
-import SortPresenter from './presenter/sort-presenter.js';
 import MoviesModel from './model/movies-model';
 import FilterModel from './model/filter-model.js';
-import SortModel from './model/sort-model.js';
-import {getValuesToFilters} from './filter.js';
+import CommentsModel from './model/comments-model.js';
 import {render} from './framework/render.js';
+import ApiMovieService from './api-srvice/api-movie-service.js';
+import ApiCommentsService from './api-srvice/api-comments-service.js';
+
+const AUTHORIZATION = 'Basic Vlad84';
+const END_POINT = 'https://18.ecmascript.pages.academy/cinemaddict/';
 
 const headerElement = document.querySelector('.header');
 const mainElement = document.querySelector('.main');
@@ -18,30 +17,24 @@ const sectionElement = document.querySelector('.footer__statistics');
 const footerElement = document.querySelector('footer');
 
 
-const moviesModel = new MoviesModel();
+const moviesModel = new MoviesModel(new ApiMovieService (END_POINT, AUTHORIZATION));
 const containerView = new ContainerView;
-const filter = getValuesToFilters (moviesModel.movies);
-const navigationMenuView = new NavigationMenuView (filter);
 const filterModel = new FilterModel (moviesModel);
-const sortModel = new SortModel;
-const sortingView = new SortingView;
+const commentsModel = new CommentsModel (new ApiCommentsService (END_POINT, AUTHORIZATION));
 
-
-render(new UserNameView(), headerElement);
-render(navigationMenuView, mainElement);
 render(containerView, mainElement);
-render(new NumberOfFilmsView(), sectionElement);
 
 const container = document.querySelector('.films-list__container');
 const bodyElement = document.querySelector ('body');
 
-const masterPresenter = new MasterPresenter (container, footerElement, moviesModel, bodyElement,
-  containerView, navigationMenuView, sortingView);
-masterPresenter.init ();
 
-const filterPresenter = new FilterPresenter (navigationMenuView, filterModel, masterPresenter, moviesModel);
+const filterPresenter = new FilterPresenter (filterModel, moviesModel, mainElement, headerElement);
 filterPresenter.init ();
 
-const sortPresenter = new SortPresenter (sortingView, sortModel, masterPresenter);
-sortPresenter.init ();
 
+const masterPresenter = new MasterPresenter (container, footerElement, moviesModel, bodyElement,
+  containerView, filterModel, sectionElement, commentsModel);
+masterPresenter.init ();
+
+
+moviesModel.init ();

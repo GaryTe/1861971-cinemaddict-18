@@ -2,7 +2,7 @@ import AbstractView from '../framework/view/abstract-view.js';
 import { humanizeYear, humanizeHour, humanizeMinute} from '../utils.js';
 
 const createMovieCard = (data) => {
-  const {index,filmInfo,comments, userDetails} = data;
+  const {filmInfo,comments, userDetails} = data;
 
   return (`<article class="film-card">
 <a class="film-card__link">
@@ -11,7 +11,9 @@ const createMovieCard = (data) => {
   <p class="film-card__info">
     <span class="film-card__year">${humanizeYear (filmInfo.release.date)}</span>
     <span class="film-card__duration">${`${humanizeHour (filmInfo.release.date)}h ${humanizeMinute (filmInfo.release.date)}m`}</span>
-    <span class="film-card__genre">${filmInfo.genre[index]}</span>
+    <span class="film-card__genre">
+    ${filmInfo.genre.join (' , ')}
+    </span>
   </p>
   <img src="${filmInfo.poster}" alt="" class="film-card__poster">
   <p class="film-card__description">${filmInfo.description.length === 140 ? filmInfo.description : `${filmInfo.description.slice(0, 139)}...`}</p>
@@ -47,7 +49,7 @@ export default class MovieCardView extends AbstractView{
 
 
   #click = () => {
-    this._callback.click (this.#data);
+    this._callback.click (null, null, this.#data);
   };
 
 

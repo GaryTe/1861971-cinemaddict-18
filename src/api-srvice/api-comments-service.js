@@ -6,7 +6,7 @@ const Method = {
 };
 
 export default class ApiCommentsService extends ApiService {
-  getComments = (film) => this._load({url: `comments/${film.id}`})
+  getComments = (movie) => this._load({url: `comments/${movie.id}`})
     .then (ApiService.parseResponse);
 
 
@@ -20,11 +20,11 @@ export default class ApiCommentsService extends ApiService {
   };
 
 
-  addComment = async (film) => {
+  addComment = async (comment) => {
     const response = await this._load({
-      url: `comments/${film.id}`,
+      url: `comments/${comment.id}`,
       method: Method.POST,
-      body: JSON.stringify(this.#adaptToServer (film)),
+      body: JSON.stringify(this.#adaptToServer (comment)),
       headers: new Headers({'Content-Type': 'application/json'}),
     });
 

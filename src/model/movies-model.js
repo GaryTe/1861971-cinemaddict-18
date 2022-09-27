@@ -50,7 +50,7 @@ export default class MoviesModel extends Observable{
 
   init = async () => {
     try {
-      const films = await this.#moviesService.film;
+      const films = await this.#moviesService.movies;
       this.#movies = films.map(this.#adaptToClient);
     } catch(err) {
       this.#movies = [];

@@ -9,13 +9,13 @@ export default class CommentsModel extends Observable{
     this.#commentsService = commentsService;
   }
 
-  getComments = async (film) => {
+  getComments = async (movie) => {
     try {
-      this.#comments = await this.#commentsService.getComments (film);
+      this.#comments = await this.#commentsService.getComments (movie);
     } catch(err) {
       this.#comments = [];
     }
-    this._notify (film, this.#comments);
+    this._notify (movie, this.#comments);
   };
 
 
@@ -34,7 +34,7 @@ export default class CommentsModel extends Observable{
         ...this.#comments.slice(index + 1),
       ];
 
-      this._notify(updateType,{update, commentary: this.#comments});
+      this._notify(updateType,{update, comments: this.#comments});
 
     } catch(err) {
       throw new Error('Can\'t delete task');
@@ -46,6 +46,7 @@ export default class CommentsModel extends Observable{
     try {
       const response = await this.#commentsService.addComment(update);
       const newComment = this.#adaptToClient(response);
+      this.#comments = newComment.comments;
 
       this._notify(updateType, newComment);
 
@@ -78,7 +79,7 @@ export default class CommentsModel extends Observable{
         }
       },
 
-      commentary: film.comments
+      comments: film.comments
 
     };
 

@@ -1,6 +1,6 @@
 import MovieCardView from '../view/movie-card-view.js';
 import {render, remove, replace} from '../framework/render.js';
-import {FilterType} from '../const.js';
+import {UserAction, UpdateType} from '../const.js';
 
 export default class MovieCardsPresenter {
   #movieCard = null;
@@ -8,14 +8,11 @@ export default class MovieCardsPresenter {
   #movieChange = null;
   #movie = null;
   #renderPopup = null;
-  #userAction = null;
-  #updateType = null;
 
-  constructor (container, movieChange, userAction, updateType, renderPopup) {
+
+  constructor (container, movieChange, renderPopup) {
     this.#container = container;
     this.#movieChange = movieChange;
-    this.#userAction = userAction;
-    this.#updateType = updateType;
     this.#renderPopup = renderPopup;
 
   }
@@ -52,30 +49,27 @@ export default class MovieCardsPresenter {
 
   #addToWatchlis = () => {
     this.#movieChange (
-      this.#userAction,
-      this.#updateType,
+      UserAction.UPDATE_MOVIE,
+      UpdateType.MAJOR,
       {...this.#movie, userDetails: {...this.#movie.userDetails,watchlist : !this.#movie.userDetails.watchlist}},
-      FilterType.WATCHLIST
     );
   };
 
 
   #alreadyWatched = () => {
     this.#movieChange (
-      this.#userAction,
-      this.#updateType,
+      UserAction.UPDATE_MOVIE,
+      UpdateType.MAJOR,
       {...this.#movie, userDetails: {...this.#movie.userDetails,alreadyWatched : !this.#movie.userDetails.alreadyWatched}},
-      FilterType.ALREADY_WATCHED
     );
   };
 
 
   #addToFavorites = () => {
     this.#movieChange (
-      this.#userAction,
-      this.#updateType,
+      UserAction.UPDATE_MOVIE,
+      UpdateType.MAJOR,
       {...this.#movie, userDetails: {...this.#movie.userDetails,favorite : !this.#movie.userDetails.favorite}},
-      FilterType.FAVORITE
     );
   };
 

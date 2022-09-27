@@ -16,10 +16,9 @@ const createPopup = (data, commentatorsData) => {
 
   function getListComments () {
     const listComments = [];
-    for(let i = 0; i < commentatorsData.length; i++){
-      if (comments [i] === commentatorsData [i].id){
-        const {author, comment, emotion, date} = commentatorsData [i];
-        const descriptionsComment = `<li class="film-details__comment">
+    for (const commentary of commentatorsData) {
+      const {author, comment, emotion, date} = commentary;
+      const descriptionsComment = `<li class="film-details__comment">
       <span class="film-details__comment-emoji">
         <img src="images/emoji/${emotion}.png" width="55" height="55" alt="emoji-${emotion}">
       </span>
@@ -32,8 +31,7 @@ const createPopup = (data, commentatorsData) => {
         </p>
       </div>
     </li>`;
-        listComments.push(descriptionsComment);
-      }
+      listComments.push(descriptionsComment);
     }
     return listComments;
   }

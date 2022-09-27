@@ -12,19 +12,15 @@ export default class PopupPresenter {
   #bodyElement = null;
   #film = null;
   #handleActionCommentsModel = null;
-  #userAction = null;
-  #updateType = null;
 
   #scrollCoordinate = 0;
 
 
-  constructor (footerElement, closPopup, popupChange, bodyElement, userAction, updateType, handleActionCommentsModel) {
+  constructor (footerElement, closPopup, popupChange, bodyElement, handleActionCommentsModel) {
     this.#footerElement = footerElement;
     this.#closPopup = closPopup;
     this.#popupChange = popupChange;
     this.#bodyElement = bodyElement;
-    this.#userAction = userAction;
-    this.#updateType = updateType;
     this.#handleActionCommentsModel = handleActionCommentsModel;
   }
 
@@ -74,11 +70,11 @@ export default class PopupPresenter {
   }
 
 
-  #setNewMovie = (movie) => {
+  #setNewMovie = (comment) => {
     this.#handleActionCommentsModel (
-      UserAction.ADD_MOVIE,
+      UserAction.ADD_COMMENT,
       UpdateType.PATCH,
-      movie
+      comment
     );
   };
 
@@ -86,8 +82,8 @@ export default class PopupPresenter {
   #addToWatchlis = (coordinate) => {
     this.#scrollCoordinate = coordinate;
     this.#popupChange (
-      this.#userAction,
-      this.#updateType,
+      UserAction.UPDATE_MOVIE,
+      UpdateType.MAJOR,
       {...this.#movie, userDetails: {...this.#movie.userDetails,watchlist : !this.#movie.userDetails.watchlist}},
     );
   };
@@ -96,8 +92,8 @@ export default class PopupPresenter {
   #alreadyWatched = (coordinate) => {
     this.#scrollCoordinate = coordinate;
     this.#popupChange (
-      this.#userAction,
-      this.#updateType,
+      UserAction.UPDATE_MOVIE,
+      UpdateType.MAJOR,
       {...this.#movie, userDetails: {...this.#movie.userDetails,alreadyWatched : !this.#movie.userDetails.alreadyWatched}},
     );
   };
@@ -106,8 +102,8 @@ export default class PopupPresenter {
   #addToFavorites = (coordinate) => {
     this.#scrollCoordinate = coordinate;
     this.#popupChange (
-      this.#userAction,
-      this.#updateType,
+      UserAction.UPDATE_MOVIE,
+      UpdateType.MAJOR,
       {...this.#movie, userDetails: {...this.#movie.userDetails,favorite : !this.#movie.userDetails.favorite}},
     );
   };
@@ -116,7 +112,7 @@ export default class PopupPresenter {
   #deleteComment = (commentary,coordinate) => {
     this.#scrollCoordinate = coordinate;
     this.#handleActionCommentsModel (
-      UserAction.DELETE_MOVIE,
+      UserAction.DELETE_COMMENT,
       UpdateType.PATCH,
       {...this.#movie, comments: [...this.#movie.comments.filter ((comment) => comment !== commentary.id)]},
       commentary

@@ -185,7 +185,7 @@ export default class MasterPresenter {
 
   #renderMovieCardAndPopup = (data) => {
     const movieCardPresenter = new MovieCardPresenter (this.#container, this.#handleViewAction,
-      UserAction.UPDATE_MOVIE, UpdateType.MAJOR, this.#handleActionCommentsModel);
+      this.#handleActionCommentsModel);
     movieCardPresenter.init (data);
     this.#collectionMovieCard.set (data.id, movieCardPresenter);
   };
@@ -202,21 +202,6 @@ export default class MasterPresenter {
 
   #handleModelEvent = (updateType, updatedMovie) => {
     switch (updateType) {
-      /*
-      case UpdateType.PATCH:
-        this.#collectionMovieCard.get (updatedMovie.id).init (updatedMovie);
-        if (this.#popup !== null) {
-          this.#popup.init (updatedMovie);
-        }
-        break;
-      case UpdateType.MINOR:
-        this.#clearBoard ();
-        this.#checkFilmContainer ();
-        if (this.#popup !== null) {
-          this.#popup.init (updatedMovie);
-        }
-        break;
-        */
       case UpdateType.MAJOR:
         if (this.#popup !== null) {
           this.#popup.init (updatedMovie, this.#comments);
@@ -259,10 +244,10 @@ export default class MasterPresenter {
 
   #handleActionCommentsModel = (actionType, updateType, update, comment) => {
     switch (actionType) {
-      case UserAction.DELETE_MOVIE:
+      case UserAction.DELETE_COMMENT:
         this.#commentsModel.deleteComment (updateType, update, comment);
         break;
-      case UserAction.ADD_MOVIE:
+      case UserAction.ADD_COMMENT:
         this.#commentsModel.addComment (updateType, update);
         break;
       default:
@@ -273,12 +258,12 @@ export default class MasterPresenter {
 
 
   #handleCommentModelEvent = (updateType, updatedMovie) => {
-    const {update, commentary} = updatedMovie;
+    const {update, comments} = updatedMovie;
     switch (updateType) {
       case UpdateType.PATCH:
         this.#collectionMovieCard.get (update.id).init (update);
         if (this.#popup !== null) {
-          this.#popup.init (update, commentary);
+          this.#popup.init (update, comments);
         }
         break;
       default:
@@ -293,7 +278,7 @@ export default class MasterPresenter {
     document.addEventListener('keydown',this.#closePopupKey);
     this.#checkOpenPopups ();
     this.#popup = new PopupPresenter (this.#footerElement, this.#closePopup, this.#handleViewAction, this.#bodyElement,
-      UserAction.UPDATE_MOVIE, UpdateType.MAJOR, this.#handleActionCommentsModel);
+      this.#handleActionCommentsModel);
     this.#popup.init (movie, this.#comments);
     this.#bodyElement.classList.add ('hide-overflow');
   };

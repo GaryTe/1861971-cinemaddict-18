@@ -73,4 +73,9 @@ export default class MovieCardsPresenter {
     );
   };
 
+
+  setAborting (uiBlocker) {
+    this.#movieCard.shakeControls (uiBlocker.unblock);
+  }
+
 }

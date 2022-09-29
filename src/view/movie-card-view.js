@@ -37,7 +37,7 @@ export default class MovieCardView extends AbstractView{
   }
 
 
-  get template() {
+  get template () {
     return createMovieCard(this.#data);
   }
 
@@ -83,5 +83,12 @@ export default class MovieCardView extends AbstractView{
 
   #addToFavorites = () => {
     this._callback.addToFavorites ();
+  };
+
+
+  shakeControls = (uiBlocker) => {
+    uiBlocker ();
+    const filmCardControls = this.element.querySelector ('.film-card__controls');
+    this.shakeAbsolute.call ({element: filmCardControls});
   };
 }

@@ -1,9 +1,10 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { humanizeDateMonthYear, humanizeHour, humanizeMinute, humanizeDateMonthYearHourMinute} from '../utils.js';
+import { UserAction } from '../const.js';
 
 
 const createPopup = (data, commentatorsData) => {
-  const {filmInfo, comments, userDetails, emoji, description} = data;
+  const {filmInfo, comments, userDetails, emoji, description, isDisabled, isDeleting, isLockForm, isLockButton} = data;
 
 
   const putEmotion = () => {
@@ -27,7 +28,7 @@ const createPopup = (data, commentatorsData) => {
         <p class="film-details__comment-info">
           <span class="film-details__comment-author">${author}</span>
           <span class="film-details__comment-day">${humanizeDateMonthYearHourMinute (date)}</span>
-          <button class="film-details__comment-delete">Delete</button>
+          <button class="film-details__comment-delete ${isDisabled ? 'disabled' : ''}">${isDeleting ? 'Deleting' : 'Delete'}</button>
         </p>
       </div>
     </li>`;
@@ -100,7 +101,7 @@ const createPopup = (data, commentatorsData) => {
       </div>
     </div>
 
-    <section class="film-details__controls">
+    <section class="film-details__controls ${isLockButton ? 'disabled' : ''}">
       <button type="button" class="film-details__control-button film-details__control-button--watchlist ${userDetails.watchlist === true ? 'film-details__control-button--active' : ''}" id="watchlist" name="watchlist">Add to watchlist</button>
       <button type="button" class="film-details__control-button film-details__control-button--watched ${userDetails.alreadyWatched === true ? 'film-details__control-button--active' : ''}" id="watched" name="watched">Already watched</button>
       <button type="button" class="film-details__control-button film-details__control-button--favorite ${userDetails.favorite === true ? 'film-details__control-button--active' : ''}" id="favorite" name="favorite">Add to favorites</button>
@@ -113,7 +114,7 @@ const createPopup = (data, commentatorsData) => {
 
       <ul class="film-details__comments-list">${getListComments ().join ('')}</ul>
 
-      <form class="film-details__new-comment" action="" method="get">
+      <form class="film-details__new-comment ${isLockForm ? 'disabled' : ''}" action="" method="get">
         <div class="film-details__add-emoji-label">${putEmotion ()}</div>
 
         <label class="film-details__comment-label">
@@ -283,12 +284,65 @@ export default class PopupView extends AbstractStatefulView {
 
 
   #parseStateToData = () => {
-    this._callback.returnNewMovie ({id: this._state.id, emoji: this._state.emoji, description: this._state.description});
+    this._callback.returnNewMovie ({
+      id: this._state.id,
+      emoji: this._state.emoji,
+      description: this._state.description
+    });
+    delete this._state.isDisabled;
+    delete this._state.isDeleting;
+    delete this._state.isLockForm;
+    delete this._state.isLockButton;
   };
 
 
-  static popupToState = (popup) => ({...popup, emoji: null, description: null});
+  static popupToState = (popup) => ({
+    ...popup, emoji: null,
+    description: null,
+    isDisabled: false,
+    isDeleting: false,
+    isLockForm: false,
+    isLockButton: false
+  });
 
 
   static parseStateToData = (state) => state;
+
+
+  shakeControls = (popup, uiBlocker, userAction) => {
+    uiBlocker.unblock ();
+
+    const setDeleting = () => {
+      popup.updateElement ({
+        isDisabled: false,
+        isDeleting: false
+      });
+    };
+
+    const setLockForm = () => {
+      popup.updateElement ({
+        isLockForm: false
+      });
+    };
+    switch (userAction) {
+      case UserAction.DELETE_COMMENT:{
+        const filmDetailsComment = this.element.querySelector ('.film-details__comments-list');
+        this.shake.call ({element: filmDetailsComment});
+        setDeleting ();
+        break;
+      }
+      case UserAction.ADD_COMMENT:{
+        const filmDetailsNewComment = this.element.querySelector ('.film-details__new-comment');
+        this.shake.call ({element: filmDetailsNewComment});
+        setLockForm ();
+        break;
+      }
+      default:{
+        const filmDetailsControls = this.element.querySelector ('.film-details__controls');
+        this.shake.call ({element: filmDetailsControls});
+        break;
+      }
+    }
+
+  };
 }

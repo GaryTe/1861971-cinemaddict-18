@@ -119,4 +119,30 @@ export default class PopupPresenter {
     );
   };
 
+  setDeleting = () => {
+    this.#popup.updateElement ({
+      isDisabled: true,
+      isDeleting: true
+    });
+  };
+
+
+  setLockForm = () => {
+    this.#popup.updateElement ({
+      isLockForm: true
+    });
+  };
+
+
+  setLockButton = () => {
+    this.#popup.updateElement ({
+      isLockButton: true
+    });
+  };
+
+
+  setAborting (uiBlocker, userAction) {
+    this.#popup.shakeControls (this.#popup, uiBlocker, userAction);
+  }
+
 }

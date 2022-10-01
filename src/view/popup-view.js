@@ -153,14 +153,12 @@ export default class PopupView extends AbstractStatefulView {
   #scrollCoordinate = 0;
   #comments = [];
 
-  constructor (data, comments) {
-    super ();
+  init (data, comments) {
     this._state = PopupView.popupToState (data);
     this.#comments = comments;
     this.#setInnerHandlers ();
     this.#scroll ();
   }
-
 
   get template() {
     return createPopup(this._state, this.#comments);

@@ -22,6 +22,7 @@ export default class PopupPresenter {
     this.#popupChange = popupChange;
     this.#bodyElement = bodyElement;
     this.#handleActionCommentsModel = handleActionCommentsModel;
+    this.#popup = new PopupView;
   }
 
 
@@ -30,16 +31,16 @@ export default class PopupPresenter {
 
   init (movie, comments) {
     this.#movie = movie;
+    this.#popup.init (movie, comments);
 
+    //  const prevPopup = this.#popup;
 
-    const prevPopup = this.#popup;
-
-    this.#popup = new PopupView (movie, comments);
 
     this.#addHandlersToPopup ();
-
+    render(this.#popup, this.#footerElement, RenderPosition.AFTEREND);
+    /*
     if (prevPopup === null) {
-      render(this.#popup, this.#footerElement, RenderPosition.AFTEREND);
+
       return;
     }
 
@@ -47,6 +48,7 @@ export default class PopupPresenter {
       replace (this.#popup, prevPopup);
       this.#putPopupByCoordinates ();
     }
+    */
   }
 
 

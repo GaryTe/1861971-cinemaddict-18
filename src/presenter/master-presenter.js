@@ -13,7 +13,7 @@ import {sortByDate, sortByRating, sortDataByKey} from '../utils.js';
 const COUNTER = 5;
 
 const TimeLimit = {
-  LOWER_LIMIT: 350,
+  LOWER_LIMIT: 50,
   UPPER_LIMIT: 2000,
 };
 

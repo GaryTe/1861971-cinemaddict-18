@@ -1,15 +1,10 @@
 import AbstractView from '../framework/view/abstract-view.js';
 
-const SORT_NAME = [
-  'Sort by default',
-  'Sort by date',
-  'Sort by rating'
-];
 
 const createSorting = (currentSortType) => `<ul class="sort">
-<li><a href="#" class="sort__button ${currentSortType === 'Sort by default' ? 'sort__button--active' : ''}">Sort by default</a></li>
-<li><a href="#" class="sort__button ${currentSortType === 'Sort by date' ? 'sort__button--active' : ''}">Sort by date</a></li>
-<li><a href="#" class="sort__button ${currentSortType === 'Sort by rating' ? 'sort__button--active' : ''}">Sort by rating</a></li>
+<li><a href="#" class="sort__button ${currentSortType === 'Sort by default' ? 'sort__button--active' : ''}" name = 'Sort by default'>Sort by default</a></li>
+<li><a href="#" class="sort__button ${currentSortType === 'Sort by date' ? 'sort__button--active' : ''}" name = 'Sort by date'>Sort by date</a></li>
+<li><a href="#" class="sort__button ${currentSortType === 'Sort by rating' ? 'sort__button--active' : ''}" name = 'Sort by rating'>Sort by rating</a></li>
 </ul>`;
 
 export default class SortingView extends AbstractView {
@@ -29,12 +24,12 @@ export default class SortingView extends AbstractView {
   setClickHandler (callback) {
     this._callback.click = callback;
     this.#sortButtons = this.element.querySelectorAll ('.sort__button');
-    for (let i = 0; i < this.#sortButtons.length; i++) {
-      this.#sortButtons[i].addEventListener ('click', (evt) => {
+    this.element.addEventListener ('click', (evt) => {
+      if (evt.target.nodeName === 'A') {
         this.#checkClass (evt);
-        this.#click (SORT_NAME [i]);
-      });
-    }
+        this.#click (evt.target.name);
+      }
+    });
   }
 
 

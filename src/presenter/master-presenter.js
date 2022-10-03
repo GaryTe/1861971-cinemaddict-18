@@ -5,11 +5,17 @@ import SortingView from '../view/sorting-view.js';
 import PopupPresenter from './popup-presenter.js';
 import NumberOfFilmsView from '../view/number-of-films-view.js';
 import LoadingView from '../view/loading-view.js';
+import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
 import {RenderPosition, render, remove} from '../framework/render.js';
 import {UserAction, UpdateType, SortType, FilterType} from '../const.js';
 import {sortByDate, sortByRating, sortDataByKey} from '../utils.js';
 
 const COUNTER = 5;
+
+const TimeLimit = {
+  LOWER_LIMIT: 50,
+  UPPER_LIMIT: 2000,
+};
 
 export default class MasterPresenter {
   #bodyElement = null;
@@ -34,6 +40,7 @@ export default class MasterPresenter {
   #loadingView = new LoadingView;
   #isLoading = true;
   #comments = [];
+  #uiBlocker = new UiBlocker (TimeLimit.LOWER_LIMIT, TimeLimit.UPPER_LIMIT);
 
 
   constructor (container, footerElement, moviesModel, bodyElement, containerView, filterModel, sectionElement, commentsModel) {
@@ -191,12 +198,25 @@ export default class MasterPresenter {
   };
 
 
-  #handleViewAction = (actionType, updateType, update) => {
+  #handleViewAction = async (actionType, updateType, update) => {
+    this.#uiBlocker.block ();
     switch (actionType) {
       case UserAction.UPDATE_MOVIE:
-        this.#moviesModel.updatMovie(updateType, update);
+        if (this.#popup !== null) {
+          this.#popup.setLockButton ();
+        }
+        try {
+          await this.#moviesModel.updatMovie(updateType, update);
+        } catch(err) {
+          if (this.#popup !== null) {
+            this.#popup.setAborting (this.#uiBlocker, UserAction.UPDATE_MOVIE);
+          } else {
+            this.#collectionMovieCard.get(update.id).setAborting(this.#uiBlocker);
+          }
+        }
         break;
     }
+    this.#uiBlocker.unblock ();
   };
 
 
@@ -242,18 +262,30 @@ export default class MasterPresenter {
   };
 
 
-  #handleActionCommentsModel = (actionType, updateType, update, comment) => {
+  #handleActionCommentsModel = async (actionType, updateType, update, comment) => {
+    this.#uiBlocker.block ();
     switch (actionType) {
       case UserAction.DELETE_COMMENT:
-        this.#commentsModel.deleteComment (updateType, update, comment);
+        this.#popup.setDeleting ();
+        try {
+          await this.#commentsModel.deleteComment (updateType, update, comment);
+        } catch(err) {
+          this.#popup.setAborting(this.#uiBlocker, UserAction.DELETE_COMMENT);
+        }
         break;
       case UserAction.ADD_COMMENT:
-        this.#commentsModel.addComment (updateType, update);
+        this.#popup.setLockForm ();
+        try {
+          await this.#commentsModel.addComment (updateType, update);
+        } catch(err) {
+          this.#popup.setAborting(this.#uiBlocker, UserAction.ADD_COMMENT);
+        }
         break;
       default:
         this.#commentsModel.getComments (update);
         break;
     }
+    this.#uiBlocker.unblock ();
   };
 
 
@@ -277,7 +309,7 @@ export default class MasterPresenter {
     this.#comments = comments;
     document.addEventListener('keydown',this.#closePopupKey);
     this.#checkOpenPopups ();
-    this.#popup = new PopupPresenter (this.#footerElement, this.#closePopup, this.#handleViewAction, this.#bodyElement,
+    this.#popup = new PopupPresenter (this.#footerElement, this.#closePopup, this.#handleViewAction,
       this.#handleActionCommentsModel);
     this.#popup.init (movie, this.#comments);
     this.#bodyElement.classList.add ('hide-overflow');

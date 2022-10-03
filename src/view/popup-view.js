@@ -153,7 +153,8 @@ export default class PopupView extends AbstractStatefulView {
   #scrollCoordinate = 0;
   #comments = [];
 
-  init (data, comments) {
+  constructor (data, comments) {
+    super ();
     this._state = PopupView.popupToState (data);
     this.#comments = comments;
     this.#setInnerHandlers ();
@@ -162,6 +163,13 @@ export default class PopupView extends AbstractStatefulView {
 
   get template() {
     return createPopup(this._state, this.#comments);
+  }
+
+
+  update (data, comments) {
+    this.#comments = comments;
+    this.updateElement ({...PopupView.popupToState (data)});
+    this.restoreScroll ();
   }
 
 
@@ -184,6 +192,11 @@ export default class PopupView extends AbstractStatefulView {
   };
 
 
+  restoreScroll () {
+    this.element.scrollBy (0, this.#scrollCoordinate);
+  }
+
+
   setDeleteComment (callback) {
     this._callback.deleteComment = callback;
     const buttons = this.element.querySelectorAll ('.film-details__comment-delete');
@@ -196,7 +209,7 @@ export default class PopupView extends AbstractStatefulView {
 
 
   #deleteComment = (comment) => {
-    this._callback.deleteComment (comment, this.#scrollCoordinate);
+    this._callback.deleteComment (comment);
   };
 
 
@@ -218,7 +231,7 @@ export default class PopupView extends AbstractStatefulView {
 
 
   #addToWatchlis = () => {
-    this._callback.addToWatchlis (this.#scrollCoordinate);
+    this._callback.addToWatchlis ();
   };
 
 
@@ -229,7 +242,7 @@ export default class PopupView extends AbstractStatefulView {
 
 
   #alreadyWatched = () => {
-    this._callback.alreadyWatched (this.#scrollCoordinate);
+    this._callback.alreadyWatched ();
   };
 
 
@@ -240,7 +253,7 @@ export default class PopupView extends AbstractStatefulView {
 
 
   #addToFavorites = () => {
-    this._callback.addToFavorites (this.#scrollCoordinate);
+    this._callback.addToFavorites ();
   };
 
 
@@ -258,7 +271,7 @@ export default class PopupView extends AbstractStatefulView {
     this.updateElement ({
       emoji: evt.target.value
     });
-    this.element.scrollBy (0, this.#scrollCoordinate);
+    this.restoreScroll ();
   };
 
 
@@ -315,12 +328,14 @@ export default class PopupView extends AbstractStatefulView {
         isDisabled: false,
         isDeleting: false
       });
+      this.restoreScroll ();
     };
 
     const setLockForm = () => {
       popup.updateElement ({
         isLockForm: false
       });
+      this.restoreScroll ();
     };
     switch (userAction) {
       case UserAction.DELETE_COMMENT:{

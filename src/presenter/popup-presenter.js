@@ -1,5 +1,5 @@
 import PopupView from '../view/popup-view.js';
-import {render, replace, RenderPosition, remove} from '../framework/render.js';
+import {render, RenderPosition, remove} from '../framework/render.js';
 import {UpdateType, UserAction} from '../const.js';
 
 
@@ -9,20 +9,14 @@ export default class PopupPresenter {
   #footerElement = null;
   #closPopup = null;
   #popupChange = null;
-  #bodyElement = null;
-  #film = null;
   #handleActionCommentsModel = null;
 
-  #scrollCoordinate = 0;
 
-
-  constructor (footerElement, closPopup, popupChange, bodyElement, handleActionCommentsModel) {
+  constructor (footerElement, closPopup, popupChange, handleActionCommentsModel) {
     this.#footerElement = footerElement;
     this.#closPopup = closPopup;
     this.#popupChange = popupChange;
-    this.#bodyElement = bodyElement;
     this.#handleActionCommentsModel = handleActionCommentsModel;
-    this.#popup = new PopupView;
   }
 
 
@@ -30,25 +24,18 @@ export default class PopupPresenter {
 
 
   init (movie, comments) {
+
     this.#movie = movie;
-    this.#popup.init (movie, comments);
+    const prevPopup = this.#popup;
 
-    //  const prevPopup = this.#popup;
-
-
-    this.#addHandlersToPopup ();
-    render(this.#popup, this.#footerElement, RenderPosition.AFTEREND);
-    /*
     if (prevPopup === null) {
-
+      this.#popup = new PopupView (movie, comments);
+      render(this.#popup, this.#footerElement, RenderPosition.AFTEREND);
+      this.#addHandlersToPopup ();
       return;
     }
 
-    if (this.#bodyElement.contains(prevPopup.element)) {
-      replace (this.#popup, prevPopup);
-      this.#putPopupByCoordinates ();
-    }
-    */
+    this.#popup.update (movie, comments);
   }
 
 
@@ -67,11 +54,6 @@ export default class PopupPresenter {
   };
 
 
-  #putPopupByCoordinates () {
-    this.#popup.element.scrollBy (0, this.#scrollCoordinate);
-  }
-
-
   #setNewMovie = (comment) => {
     this.#handleActionCommentsModel (
       UserAction.ADD_COMMENT,
@@ -81,8 +63,7 @@ export default class PopupPresenter {
   };
 
 
-  #addToWatchlis = (coordinate) => {
-    this.#scrollCoordinate = coordinate;
+  #addToWatchlis = () => {
     this.#popupChange (
       UserAction.UPDATE_MOVIE,
       UpdateType.MAJOR,
@@ -91,8 +72,7 @@ export default class PopupPresenter {
   };
 
 
-  #alreadyWatched = (coordinate) => {
-    this.#scrollCoordinate = coordinate;
+  #alreadyWatched = () => {
     this.#popupChange (
       UserAction.UPDATE_MOVIE,
       UpdateType.MAJOR,
@@ -101,8 +81,7 @@ export default class PopupPresenter {
   };
 
 
-  #addToFavorites = (coordinate) => {
-    this.#scrollCoordinate = coordinate;
+  #addToFavorites = () => {
     this.#popupChange (
       UserAction.UPDATE_MOVIE,
       UpdateType.MAJOR,
@@ -111,8 +90,7 @@ export default class PopupPresenter {
   };
 
 
-  #deleteComment = (commentary,coordinate) => {
-    this.#scrollCoordinate = coordinate;
+  #deleteComment = (commentary) => {
     this.#handleActionCommentsModel (
       UserAction.DELETE_COMMENT,
       UpdateType.PATCH,
@@ -126,6 +104,7 @@ export default class PopupPresenter {
       isDisabled: true,
       isDeleting: true
     });
+    this.#popup.restoreScroll ();
   };
 
 
@@ -133,6 +112,7 @@ export default class PopupPresenter {
     this.#popup.updateElement ({
       isLockForm: true
     });
+    this.#popup.restoreScroll ();
   };
 
 
@@ -140,6 +120,7 @@ export default class PopupPresenter {
     this.#popup.updateElement ({
       isLockButton: true
     });
+    this.#popup.restoreScroll ();
   };
 
 

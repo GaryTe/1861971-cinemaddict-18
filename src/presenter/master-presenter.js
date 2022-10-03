@@ -309,7 +309,7 @@ export default class MasterPresenter {
     this.#comments = comments;
     document.addEventListener('keydown',this.#closePopupKey);
     this.#checkOpenPopups ();
-    this.#popup = new PopupPresenter (this.#footerElement, this.#closePopup, this.#handleViewAction, this.#bodyElement,
+    this.#popup = new PopupPresenter (this.#footerElement, this.#closePopup, this.#handleViewAction,
       this.#handleActionCommentsModel);
     this.#popup.init (movie, this.#comments);
     this.#bodyElement.classList.add ('hide-overflow');

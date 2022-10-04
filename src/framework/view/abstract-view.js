@@ -6,7 +6,7 @@ const SHAKE_CLASS_NAME = 'shake';
 const SHAKE_CLASS_ABSOLUTE = 'shake-absolute';
 
 /** @const {number} Время анимации в миллисекундах */
-const SHAKE_ANIMATION_TIMEOUT = 600;
+const SHAKE_ANIMATION_TIMEOUT = 8000;
 
 /**
  * Абстрактный класс представления

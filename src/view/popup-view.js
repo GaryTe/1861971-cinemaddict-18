@@ -1,6 +1,7 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { humanizeDateMonthYear, humanizeHour, humanizeMinute, humanizeDateMonthYearHourMinute} from '../utils.js';
 import { UserAction } from '../const.js';
+import he from 'he';
 
 
 const createPopup = (data, commentatorsData) => {
@@ -24,7 +25,7 @@ const createPopup = (data, commentatorsData) => {
         <img src="images/emoji/${emotion}.png" width="55" height="55" alt="emoji-${emotion}">
       </span>
       <div>
-        <p class="film-details__comment-text">${comment}</p>
+        <p class="film-details__comment-text">${he.encode(comment)}</p>
         <p class="film-details__comment-info">
           <span class="film-details__comment-author">${author}</span>
           <span class="film-details__comment-day">${humanizeDateMonthYearHourMinute (date)}</span>
@@ -260,13 +261,13 @@ export default class PopupView extends AbstractStatefulView {
   #setInnerHandlers () {
     const emotions = this.element.querySelectorAll ('.film-details__emoji-item');
     for (const emotion of emotions) {
-      emotion.addEventListener ('change', this.#choiceOfEmotion);
+      emotion.addEventListener ('change', this.#chooseEmotion);
     }
     this.element.querySelector ('.film-details__comment-input').addEventListener ('input', this.#descriptionInputHandler);
   }
 
 
-  #choiceOfEmotion = (evt) => {
+  #chooseEmotion = (evt) => {
     evt.preventDefault();
     this.updateElement ({
       emoji: evt.target.value
@@ -321,6 +322,10 @@ export default class PopupView extends AbstractStatefulView {
 
 
   shakeControls = (popup, uiBlocker, userAction) => {
+    const filmDetailsComment = this.element.querySelector ('.film-details__comments-list');
+    const filmDetailsNewComment = this.element.querySelector ('.film-details__new-comment');
+    const filmDetailsControls = this.element.querySelector ('.film-details__controls');
+
     uiBlocker.unblock ();
 
     const setDeleting = () => {
@@ -338,23 +343,20 @@ export default class PopupView extends AbstractStatefulView {
       this.restoreScroll ();
     };
     switch (userAction) {
-      case UserAction.DELETE_COMMENT:{
-        const filmDetailsComment = this.element.querySelector ('.film-details__comments-list');
+      case UserAction.DELETE_COMMENT:
         this.shake.call ({element: filmDetailsComment});
         setDeleting ();
         break;
-      }
-      case UserAction.ADD_COMMENT:{
-        const filmDetailsNewComment = this.element.querySelector ('.film-details__new-comment');
+
+      case UserAction.ADD_COMMENT:
         this.shake.call ({element: filmDetailsNewComment});
         setLockForm ();
         break;
-      }
-      default:{
-        const filmDetailsControls = this.element.querySelector ('.film-details__controls');
+
+      default:
         this.shake.call ({element: filmDetailsControls});
         break;
-      }
+
     }
 
   };

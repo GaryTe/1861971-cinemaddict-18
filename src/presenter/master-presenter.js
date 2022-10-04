@@ -13,7 +13,7 @@ import {sortByDate, sortByRating, sortDataByKey} from '../utils.js';
 const COUNTER = 5;
 
 const TimeLimit = {
-  LOWER_LIMIT: 50,
+  LOWER_LIMIT: 80,
   UPPER_LIMIT: 2000,
 };
 
@@ -206,7 +206,7 @@ export default class MasterPresenter {
           this.#popup.setLockButton ();
         }
         try {
-          await this.#moviesModel.updatMovie(updateType, update);
+          await this.#moviesModel.updateMovie(updateType, update);
         } catch(err) {
           if (this.#popup !== null) {
             this.#popup.setAborting (this.#uiBlocker, UserAction.UPDATE_MOVIE);

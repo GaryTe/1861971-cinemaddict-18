@@ -17,7 +17,6 @@ const createFilter = (filters, filter) => {
 
 export default class NavigationMenuView extends AbstractView {
   #filters = [];
-  #buttons = null;
   #filter = '';
 
   constructor (filters, filter) {

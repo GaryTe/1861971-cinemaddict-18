@@ -27,7 +27,7 @@ export default class MovieCardsPresenter {
 
     this.#movieCard.setAddToWatchlis (this.#addToWatchlis);
     this.#movieCard.setAddToFavorites (this.#addToFavorites);
-    this.#movieCard.setAlreadyWatched (this.#alreadyWatched);
+    this.#movieCard.setAlreadyWatched (this.#addAlreadyWatched);
     this.#movieCard.setClickHandler (this.#renderPopup);
 
 
@@ -56,7 +56,7 @@ export default class MovieCardsPresenter {
   };
 
 
-  #alreadyWatched = () => {
+  #addAlreadyWatched = () => {
     this.#movieChange (
       UserAction.UPDATE_MOVIE,
       UpdateType.MAJOR,

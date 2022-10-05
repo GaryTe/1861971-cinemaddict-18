@@ -14,7 +14,7 @@ const COUNTER = 5;
 
 const TimeLimit = {
   LOWER_LIMIT: 80,
-  UPPER_LIMIT: 2000,
+  UPPER_LIMIT: 1000,
 };
 
 export default class MasterPresenter {

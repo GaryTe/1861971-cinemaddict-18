@@ -345,12 +345,12 @@ export default class PopupView extends AbstractStatefulView {
     switch (userAction) {
       case UserAction.DELETE_COMMENT:
         this.shake.call ({element: filmDetailsComment});
-        setDeleting ();
+        setTimeout (setDeleting, this._SHAKE_ANIMATION_TIMEOUT);
         break;
 
       case UserAction.ADD_COMMENT:
         this.shake.call ({element: filmDetailsNewComment});
-        setLockForm ();
+        setTimeout (setLockForm, this._SHAKE_ANIMATION_TIMEOUT);
         break;
 
       default:

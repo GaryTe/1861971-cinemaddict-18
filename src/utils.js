@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import {FilterType} from './const';
 
 
 const humanizeYear = (year) => dayjs (year).year ();
@@ -32,7 +33,7 @@ const sortByRating = (movies) => movies.slice ().sort ((a,b) => {
 
 function sortDataByKey (filterNames, movies) {
   const sortMovies = [];
-  if (filterNames === 'all') {
+  if (filterNames === FilterType.ALL) {
     return movies;
   }
   for (const movie of movies) {

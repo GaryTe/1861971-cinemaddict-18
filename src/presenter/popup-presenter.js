@@ -7,15 +7,15 @@ export default class PopupPresenter {
   #movie = null;
   #popup = null;
   #footerElement = null;
-  #closPopup = null;
-  #popupChange = null;
+  #closePopup = null;
+  #changePopup = null;
   #handleActionCommentsModel = null;
 
 
-  constructor (footerElement, closPopup, popupChange, handleActionCommentsModel) {
+  constructor (footerElement, closePopup, changePopup, handleActionCommentsModel) {
     this.#footerElement = footerElement;
-    this.#closPopup = closPopup;
-    this.#popupChange = popupChange;
+    this.#closePopup = closePopup;
+    this.#changePopup = changePopup;
     this.#handleActionCommentsModel = handleActionCommentsModel;
   }
 
@@ -45,7 +45,7 @@ export default class PopupPresenter {
 
 
   #addHandlersToPopup = () => {
-    this.#popup.setClickHandler (this.#closPopup);
+    this.#popup.setClickHandler (this.#closePopup);
     this.#popup.setAddToWatchlis (this.#addToWatchlis);
     this.#popup.setAddToFavorites (this.#addToFavorites);
     this.#popup.setAlreadyWatched (this.#alreadyWatched);
@@ -64,7 +64,7 @@ export default class PopupPresenter {
 
 
   #addToWatchlis = () => {
-    this.#popupChange (
+    this.#changePopup (
       UserAction.UPDATE_MOVIE,
       UpdateType.MAJOR,
       {...this.#movie, userDetails: {...this.#movie.userDetails,watchlist : !this.#movie.userDetails.watchlist}},
@@ -73,7 +73,7 @@ export default class PopupPresenter {
 
 
   #alreadyWatched = () => {
-    this.#popupChange (
+    this.#changePopup (
       UserAction.UPDATE_MOVIE,
       UpdateType.MAJOR,
       {...this.#movie, userDetails: {...this.#movie.userDetails,alreadyWatched : !this.#movie.userDetails.alreadyWatched}},
@@ -82,7 +82,7 @@ export default class PopupPresenter {
 
 
   #addToFavorites = () => {
-    this.#popupChange (
+    this.#changePopup (
       UserAction.UPDATE_MOVIE,
       UpdateType.MAJOR,
       {...this.#movie, userDetails: {...this.#movie.userDetails,favorite : !this.#movie.userDetails.favorite}},

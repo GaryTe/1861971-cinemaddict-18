@@ -31,19 +31,12 @@ const sortByRating = (movies) => movies.slice ().sort ((a,b) => {
 }).reverse ();
 
 
-function sortDataByKey (filterNames, movies) {
-  const sortMovies = [];
+const sortDataByKey = (filterNames, movies) => {
   if (filterNames === FilterType.ALL) {
     return movies;
   }
-  for (const movie of movies) {
-    const {userDetails} = movie;
-    if (userDetails[filterNames] === true) {
-      sortMovies.push (movie);
-    }
-  }
-  return sortMovies;
-}
+  return movies.filter ((movie) => movie.userDetails [filterNames]);
+};
 
 
 export {humanizeYear, humanizeHour, humanizeMinute, humanizeDateMonthYear,

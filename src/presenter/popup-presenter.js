@@ -44,14 +44,34 @@ export default class PopupPresenter {
   }
 
 
-  #addHandlersToPopup = () => {
-    this.#popup.setClickHandler (this.#closePopup);
-    this.#popup.setAddToWatchlis (this.#addToWatchlis);
-    this.#popup.setAddToFavorites (this.#addToFavorites);
-    this.#popup.setAlreadyWatched (this.#alreadyWatched);
-    this.#popup.setDeleteComment (this.#deleteComment);
-    this.#popup.setReturnNewMovie (this.#setNewMovie);
+  setDeleting = () => {
+    this.#popup.updateElement ({
+      isDisabled: true,
+      isDeleting: true
+    });
+    this.#popup.restoreScroll ();
   };
+
+
+  setLockForm = () => {
+    this.#popup.updateElement ({
+      isLockForm: true
+    });
+    this.#popup.restoreScroll ();
+  };
+
+
+  setLockButton = () => {
+    this.#popup.updateElement ({
+      isLockButton: true
+    });
+    this.#popup.restoreScroll ();
+  };
+
+
+  setAborting (uiBlocker, userAction) {
+    this.#popup.shakeControls (this.#popup, uiBlocker, userAction);
+  }
 
 
   #setNewMovie = (comment) => {
@@ -99,33 +119,14 @@ export default class PopupPresenter {
     );
   };
 
-  setDeleting = () => {
-    this.#popup.updateElement ({
-      isDisabled: true,
-      isDeleting: true
-    });
-    this.#popup.restoreScroll ();
+
+  #addHandlersToPopup = () => {
+    this.#popup.setClickHandler (this.#closePopup);
+    this.#popup.setAddToWatchlis (this.#addToWatchlis);
+    this.#popup.setAddToFavorites (this.#addToFavorites);
+    this.#popup.setAlreadyWatched (this.#alreadyWatched);
+    this.#popup.setDeleteComment (this.#deleteComment);
+    this.#popup.setReturnNewMovie (this.#setNewMovie);
   };
-
-
-  setLockForm = () => {
-    this.#popup.updateElement ({
-      isLockForm: true
-    });
-    this.#popup.restoreScroll ();
-  };
-
-
-  setLockButton = () => {
-    this.#popup.updateElement ({
-      isLockButton: true
-    });
-    this.#popup.restoreScroll ();
-  };
-
-
-  setAborting (uiBlocker, userAction) {
-    this.#popup.shakeControls (this.#popup, uiBlocker, userAction);
-  }
 
 }

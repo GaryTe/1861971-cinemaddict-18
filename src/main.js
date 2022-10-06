@@ -24,7 +24,7 @@ const commentsModel = new CommentsModel (new ApiCommentsService (END_POINT, AUTH
 
 render(containerView, mainElement);
 
-const container = document.querySelector('.films-list__container');
+const containerElement = document.querySelector('.films-list__container');
 const bodyElement = document.querySelector ('body');
 
 
@@ -32,7 +32,7 @@ const filterPresenter = new FilterPresenter (filterModel, moviesModel, mainEleme
 filterPresenter.init ();
 
 
-const masterPresenter = new MasterPresenter (container, footerElement, moviesModel, bodyElement,
+const masterPresenter = new MasterPresenter (containerElement, footerElement, moviesModel, bodyElement,
   containerView, filterModel, sectionElement, commentsModel);
 masterPresenter.init ();
 

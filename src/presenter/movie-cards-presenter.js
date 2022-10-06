@@ -4,14 +4,14 @@ import {UserAction, UpdateType} from '../const.js';
 
 export default class MovieCardsPresenter {
   #movieCard = null;
-  #container = null;
+  #containerElement = null;
   #movieChange = null;
   #movie = null;
   #renderPopup = null;
 
 
-  constructor (container, movieChange, renderPopup) {
-    this.#container = container;
+  constructor (containerElement, movieChange, renderPopup) {
+    this.#containerElement = containerElement;
     this.#movieChange = movieChange;
     this.#renderPopup = renderPopup;
 
@@ -32,11 +32,11 @@ export default class MovieCardsPresenter {
 
 
     if (prevMovieCard === null) {
-      render(this.#movieCard, this.#container);
+      render(this.#movieCard, this.#containerElement);
       return;
     }
 
-    if (this.#container.contains(prevMovieCard.element)) {
+    if (this.#containerElement.contains(prevMovieCard.element)) {
       replace (this.#movieCard, prevMovieCard);
     }
   }
@@ -44,6 +44,11 @@ export default class MovieCardsPresenter {
 
   destroy () {
     remove(this.#movieCard);
+  }
+
+
+  setAborting (uiBlocker) {
+    this.#movieCard.shakeControls (uiBlocker.unblock);
   }
 
 
@@ -72,10 +77,5 @@ export default class MovieCardsPresenter {
       {...this.#movie, userDetails: {...this.#movie.userDetails,favorite : !this.#movie.userDetails.favorite}},
     );
   };
-
-
-  setAborting (uiBlocker) {
-    this.#movieCard.shakeControls (uiBlocker.unblock);
-  }
 
 }

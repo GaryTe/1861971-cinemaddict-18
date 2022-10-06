@@ -19,7 +19,7 @@ const TimeLimit = {
 
 export default class MasterPresenter {
   #bodyElement = null;
-  #container = null;
+  #containerElement = null;
   #footerElement = null;
   #moviesModel = null;
   #containerView = null;
@@ -43,9 +43,9 @@ export default class MasterPresenter {
   #uiBlocker = new UiBlocker (TimeLimit.LOWER_LIMIT, TimeLimit.UPPER_LIMIT);
 
 
-  constructor (container, footerElement, moviesModel, bodyElement, containerView, filterModel, sectionElement, commentsModel) {
+  constructor (containerElement, footerElement, moviesModel, bodyElement, containerView, filterModel, sectionElement, commentsModel) {
     this.#bodyElement = bodyElement;
-    this.#container = container;
+    this.#containerElement = containerElement;
     this.#footerElement = footerElement;
     this.#moviesModel = moviesModel;
     this.#containerView = containerView;
@@ -166,7 +166,7 @@ export default class MasterPresenter {
 
   #renderButtonView = () => {
     this.#buttonView = new ButtonView ();
-    render(this.#buttonView, this.#container, RenderPosition.AFTEREND);
+    render(this.#buttonView, this.#containerElement, RenderPosition.AFTEREND);
     this.#buttonView.setClickHandler (this.#renderAdditionalMovieCards);
   };
 
@@ -191,12 +191,53 @@ export default class MasterPresenter {
 
 
   #renderMovieCardAndPopup = (data) => {
-    const movieCardPresenter = new MovieCardPresenter (this.#container, this.#handleViewAction,
+    const movieCardPresenter = new MovieCardPresenter (this.#containerElement, this.#handleViewAction,
       this.#handleActionCommentsModel);
     movieCardPresenter.init (data);
     this.#collectionMovieCard.set (data.id, movieCardPresenter);
   };
 
+
+  #clearBoard = ({resetRenderedMovieCount = false, resetSortType = false} = {}) => {
+    const movieCount = this.movies.length;
+
+    this.#collectionMovieCard.forEach ((movieCard) => movieCard.destroy());
+    this.#collectionMovieCard.clear();
+
+    this.#removeNumberOfFilmsView ();
+    this.#removeSortingView ();
+    this.#removeMessageView ();
+    this.#removeButton ();
+    remove (this.#loadingView);
+
+    if (resetRenderedMovieCount) {
+      this.#counterNumber = COUNTER;
+    } else {
+      this.#counterNumber = Math.min(movieCount, this.#counterNumber);
+    }
+
+    if (resetSortType) {
+      this.#currentSortType = SortType.SORT_BY_DEFAULT;
+    }
+  };
+
+
+  #renderPopup = (movie, comments) => {
+    this.#comments = comments;
+    document.addEventListener('keydown',this.#closePopupKey);
+    this.#checkOpenPopups ();
+    this.#popup = new PopupPresenter (this.#footerElement, this.#closePopup, this.#handleViewAction,
+      this.#handleActionCommentsModel);
+    this.#popup.init (movie, this.#comments);
+    this.#bodyElement.classList.add ('hide-overflow');
+  };
+
+
+  #checkOpenPopups () {
+    if (this.#popup !== null) {
+      remove (this.#popup.prevPopup);
+    }
+  }
 
   #handleViewAction = async (actionType, updateType, update) => {
     this.#uiBlocker.block ();
@@ -234,30 +275,6 @@ export default class MasterPresenter {
         remove(this.#loadingView);
         this.#checkFilmContainer ();
         break;
-    }
-  };
-
-
-  #clearBoard = ({resetRenderedMovieCount = false, resetSortType = false} = {}) => {
-    const movieCount = this.movies.length;
-
-    this.#collectionMovieCard.forEach ((movieCard) => movieCard.destroy());
-    this.#collectionMovieCard.clear();
-
-    this.#removeNumberOfFilmsView ();
-    this.#removeSortingView ();
-    this.#removeMessageView ();
-    this.#removeButton ();
-    remove (this.#loadingView);
-
-    if (resetRenderedMovieCount) {
-      this.#counterNumber = COUNTER;
-    } else {
-      this.#counterNumber = Math.min(movieCount, this.#counterNumber);
-    }
-
-    if (resetSortType) {
-      this.#currentSortType = SortType.SORT_BY_DEFAULT;
     }
   };
 
@@ -303,24 +320,6 @@ export default class MasterPresenter {
         break;
     }
   };
-
-
-  #renderPopup = (movie, comments) => {
-    this.#comments = comments;
-    document.addEventListener('keydown',this.#closePopupKey);
-    this.#checkOpenPopups ();
-    this.#popup = new PopupPresenter (this.#footerElement, this.#closePopup, this.#handleViewAction,
-      this.#handleActionCommentsModel);
-    this.#popup.init (movie, this.#comments);
-    this.#bodyElement.classList.add ('hide-overflow');
-  };
-
-
-  #checkOpenPopups () {
-    if (this.#popup !== null) {
-      remove (this.#popup.prevPopup);
-    }
-  }
 
 
   #closePopupKey = (evt) => {

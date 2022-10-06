@@ -16,7 +16,7 @@ const createPopup = (data, commentatorsData) => {
   };
 
 
-  function getListComments () {
+  const getListComments = () => {
     const listComments = [];
     for (const commentary of commentatorsData) {
       const {author, comment, emotion, date} = commentary;
@@ -36,7 +36,7 @@ const createPopup = (data, commentatorsData) => {
       listComments.push(descriptionsComment);
     }
     return listComments;
-  }
+  };
 
   return (`<section class="film-details">
 <div class="film-details__inner">
@@ -174,25 +174,6 @@ export default class PopupView extends AbstractStatefulView {
   }
 
 
-  _restoreHandlers = () => {
-    this.#setInnerHandlers ();
-    this.#scroll ();
-    this.setClickHandler (this._callback.click);
-    this.setAddToWatchlis (this._callback.addToWatchlis);
-    this.setAlreadyWatched (this._callback.alreadyWatched);
-    this.setAddToFavorites (this._callback.addToFavorites);
-    this.setDeleteComment (this._callback.deleteComment);
-    this.setReturnNewMovie (this._callback.returnNewMovie);
-  };
-
-
-  #scroll = () => {
-    this.element.addEventListener ('scroll', () => {
-      this.#scrollCoordinate = this.element.scrollTop;
-    });
-  };
-
-
   restoreScroll () {
     this.element.scrollBy (0, this.#scrollCoordinate);
   }
@@ -201,17 +182,12 @@ export default class PopupView extends AbstractStatefulView {
   setDeleteComment (callback) {
     this._callback.deleteComment = callback;
     const buttons = this.element.querySelectorAll ('.film-details__comment-delete');
-    for (let i = 0; i < buttons.length; i++) {
-      buttons [i].addEventListener ('click', () => {
-        this.#deleteComment (this.#comments [i]);
+    buttons.forEach( (currentValue, index) => {
+      buttons [index].addEventListener ('click', () => {
+        this.#deleteComment (this.#comments [index]);
       });
-    }
+    });
   }
-
-
-  #deleteComment = (comment) => {
-    this._callback.deleteComment (comment);
-  };
 
 
   setClickHandler (callback) {
@@ -220,20 +196,10 @@ export default class PopupView extends AbstractStatefulView {
   }
 
 
-  #click = () => {
-    this._callback.click ();
-  };
-
-
   setAddToWatchlis (callback) {
     this._callback.addToWatchlis = callback;
     this.element.querySelector ('.film-details__control-button--watchlist').addEventListener ('click', this.#addToWatchlis);
   }
-
-
-  #addToWatchlis = () => {
-    this._callback.addToWatchlis ();
-  };
 
 
   setAlreadyWatched (callback) {
@@ -242,83 +208,22 @@ export default class PopupView extends AbstractStatefulView {
   }
 
 
-  #alreadyWatched = () => {
-    this._callback.alreadyWatched ();
-  };
-
-
   setAddToFavorites (callback) {
     this._callback.addToFavorites = callback;
     this.element.querySelector ('.film-details__control-button--favorite').addEventListener ('click', this.#addToFavorites);
   }
 
 
-  #addToFavorites = () => {
-    this._callback.addToFavorites ();
-  };
-
-
-  #setInnerHandlers () {
-    const emotions = this.element.querySelectorAll ('.film-details__emoji-item');
-    for (const emotion of emotions) {
-      emotion.addEventListener ('change', this.#chooseEmotion);
-    }
-    this.element.querySelector ('.film-details__comment-input').addEventListener ('input', this.#descriptionInputHandler);
-  }
-
-
-  #chooseEmotion = (evt) => {
-    evt.preventDefault();
-    this.updateElement ({
-      emoji: evt.target.value
-    });
-    this.restoreScroll ();
-  };
-
-
-  #descriptionInputHandler = (evt) => {
-    evt.preventDefault();
-    this._setState({
-      description: evt.target.value
-    });
-  };
-
-
   setReturnNewMovie (callback) {
     this._callback.returnNewMovie = callback;
     this.element.querySelector('.film-details__new-comment').addEventListener('keydown', (evt) => {
       if (evt.key === 'Control') {return;}
-      if (evt.ctrlKey && evt.key === 'Enter') {
+      if (evt.key === 'Command') {return;}
+      if (evt.ctrlKey && evt.key === 'Enter' || evt.commandKey && evt.key === 'Enter') {
         this.#parseStateToData ();
       }
     });
   }
-
-
-  #parseStateToData = () => {
-    this._callback.returnNewMovie ({
-      id: this._state.id,
-      emoji: this._state.emoji,
-      description: this._state.description
-    });
-    delete this._state.isDisabled;
-    delete this._state.isDeleting;
-    delete this._state.isLockForm;
-    delete this._state.isLockButton;
-  };
-
-
-  static popupToState = (popup) => ({
-    ...popup, emoji: null,
-    description: null,
-    isDisabled: false,
-    isDeleting: false,
-    isLockForm: false,
-    isLockButton: false
-  });
-
-
-  static parseStateToData = (state) => state;
 
 
   shakeControls = (popup, uiBlocker, userAction) => {
@@ -360,4 +265,101 @@ export default class PopupView extends AbstractStatefulView {
     }
 
   };
+
+
+  #deleteComment = (comment) => {
+    this._callback.deleteComment (comment);
+  };
+
+
+  #click = () => {
+    this._callback.click ();
+  };
+
+
+  #addToWatchlis = () => {
+    this._callback.addToWatchlis ();
+  };
+
+
+  #alreadyWatched = () => {
+    this._callback.alreadyWatched ();
+  };
+
+
+  #addToFavorites = () => {
+    this._callback.addToFavorites ();
+  };
+
+
+  #parseStateToData = () => {
+    this._callback.returnNewMovie ({
+      id: this._state.id,
+      emoji: this._state.emoji,
+      description: this._state.description
+    });
+    delete this._state.isDisabled;
+    delete this._state.isDeleting;
+    delete this._state.isLockForm;
+    delete this._state.isLockButton;
+  };
+
+
+  #scroll = () => {
+    this.element.addEventListener ('scroll', () => {
+      this.#scrollCoordinate = this.element.scrollTop;
+    });
+  };
+
+
+  #setInnerHandlers () {
+    const emotions = this.element.querySelectorAll ('.film-details__emoji-item');
+    for (const emotion of emotions) {
+      emotion.addEventListener ('change', this.#chooseEmotion);
+    }
+    this.element.querySelector ('.film-details__comment-input').addEventListener ('input', this.#descriptionInputHandler);
+  }
+
+
+  #chooseEmotion = (evt) => {
+    evt.preventDefault();
+    this.updateElement ({
+      emoji: evt.target.value
+    });
+    this.restoreScroll ();
+  };
+
+
+  #descriptionInputHandler = (evt) => {
+    evt.preventDefault();
+    this._setState({
+      description: evt.target.value
+    });
+  };
+
+
+  _restoreHandlers = () => {
+    this.#setInnerHandlers ();
+    this.#scroll ();
+    this.setClickHandler (this._callback.click);
+    this.setAddToWatchlis (this._callback.addToWatchlis);
+    this.setAlreadyWatched (this._callback.alreadyWatched);
+    this.setAddToFavorites (this._callback.addToFavorites);
+    this.setDeleteComment (this._callback.deleteComment);
+    this.setReturnNewMovie (this._callback.returnNewMovie);
+  };
+
+
+  static popupToState = (popup) => ({
+    ...popup, emoji: null,
+    description: null,
+    isDisabled: false,
+    isDeleting: false,
+    isLockForm: false,
+    isLockButton: false
+  });
+
+
+  static parseStateToData = (state) => state;
+
 }

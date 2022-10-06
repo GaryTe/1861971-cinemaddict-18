@@ -11,7 +11,7 @@ const getValuesToFilters = (filterTypeKey,movies) => {
     case FilterType.WATCHLIST:
       for (const movie of movies) {
         const {userDetails} = movie;
-        if (userDetails.watchlist === true) {
+        if (userDetails.watchlist) {
           listsToWatch.push (userDetails.watchlist);
         }
       }
@@ -19,7 +19,7 @@ const getValuesToFilters = (filterTypeKey,movies) => {
     case FilterType.ALREADY_WATCHED:
       for (const movie of movies) {
         const {userDetails} = movie;
-        if (userDetails.alreadyWatched === true) {
+        if (userDetails.alreadyWatched) {
           listsAlreadyWatched.push (userDetails.alreadyWatched);
         }
       }
@@ -27,7 +27,7 @@ const getValuesToFilters = (filterTypeKey,movies) => {
     case FilterType.FAVORITE:
       for (const movie of movies) {
         const {userDetails} = movie;
-        if (userDetails.favorite === true) {
+        if (userDetails.favorite) {
           listsFavorite.push (userDetails.favorite);
         }
       }

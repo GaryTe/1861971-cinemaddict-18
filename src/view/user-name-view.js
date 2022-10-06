@@ -2,18 +2,18 @@ import AbstractView from '../framework/view/abstract-view.js';
 
 const createUserName = (count) =>{
 
-  function addRank () {
-    if (count === 1 || count <= 10) {
+  const addRank = () => {
+    if (count >= 1 && count <= 10) {
       return 'Novice';
     }
-    if (count === 11 || count <= 20) {
+    if (count >= 11 && count <= 20) {
       return 'Fan';
     }
-    if (count === 21) {
+    if (count >= 21) {
       return 'Movie buff';
     }
     return '';
-  }
+  };
 
   return`<section class="header__profile profile">
 <p class="profile__rating">${addRank ()}</p>

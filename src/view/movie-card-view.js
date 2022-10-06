@@ -42,15 +42,17 @@ export default class MovieCardView extends AbstractView{
   }
 
 
+  shakeControls = (uiBlocker) => {
+    uiBlocker ();
+    const filmCardControls = this.element.querySelector ('.film-card__controls');
+    this.shakeAbsolute.call ({element: filmCardControls});
+  };
+
+
   setClickHandler (callback) {
     this._callback.click = callback;
     this.element.querySelector ('.film-card__link').addEventListener ('click', this.#click);
   }
-
-
-  #click = () => {
-    this._callback.click (null, null, this.#data);
-  };
 
 
   setAddToWatchlis (callback) {
@@ -59,20 +61,10 @@ export default class MovieCardView extends AbstractView{
   }
 
 
-  #addToWatchlis = () => {
-    this._callback.addToWatchlis ();
-  };
-
-
   setAlreadyWatched (callback) {
     this._callback.alreadyWatched = callback;
     this.element.querySelector ('.film-card__controls-item--mark-as-watched').addEventListener ('click', this.#alreadyWatched);
   }
-
-
-  #alreadyWatched = () => {
-    this._callback.alreadyWatched ();
-  };
 
 
   setAddToFavorites (callback) {
@@ -81,14 +73,23 @@ export default class MovieCardView extends AbstractView{
   }
 
 
+  #click = () => {
+    this._callback.click (null, null, this.#data);
+  };
+
+
+  #addToWatchlis = () => {
+    this._callback.addToWatchlis ();
+  };
+
+
+  #alreadyWatched = () => {
+    this._callback.alreadyWatched ();
+  };
+
+
   #addToFavorites = () => {
     this._callback.addToFavorites ();
   };
 
-
-  shakeControls = (uiBlocker) => {
-    uiBlocker ();
-    const filmCardControls = this.element.querySelector ('.film-card__controls');
-    this.shakeAbsolute.call ({element: filmCardControls});
-  };
 }

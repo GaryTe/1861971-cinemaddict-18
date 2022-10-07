@@ -210,11 +210,7 @@ export default class MasterPresenter {
     this.#removeButton ();
     remove (this.#loadingView);
 
-    if (resetRenderedMovieCount) {
-      this.#counterNumber = COUNTER;
-    } else {
-      this.#counterNumber = Math.min(movieCount, this.#counterNumber);
-    }
+    this.#counterNumber = resetRenderedMovieCount ? COUNTER : Math.min(movieCount, this.#counterNumber);
 
     if (resetSortType) {
       this.#currentSortType = SortType.SORT_BY_DEFAULT;
